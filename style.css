@@ -316,6 +316,55 @@ body {
   background-image: url("assets/Cat-Walk-Down-Sheet.png?v=1");
 }
 
+.mobile-controls {
+  display: none;
+}
+
+.move-button {
+  min-height: 48px;
+  padding: 8px 10px;
+  border: 3px solid var(--cyan);
+  background: linear-gradient(180deg, #173f60, #0c1c31);
+  color: #fffce6;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.48rem;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.85);
+  touch-action: manipulation;
+  box-shadow:
+    inset 0 0 0 3px rgba(97, 201, 255, 0.16),
+    0 4px 0 #06101e;
+}
+
+.move-button:active {
+  translate: 0 3px;
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 217, 95, 0.18),
+    0 1px 0 #06101e;
+}
+
+.move-button:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+.move-button-up {
+  grid-area: up;
+}
+
+.move-button-left {
+  grid-area: left;
+}
+
+.move-button-right {
+  grid-area: right;
+}
+
+.move-button-down {
+  grid-area: down;
+}
+
 @keyframes cheddar-walk-vertical {
   0%,
   19.999% {
@@ -366,10 +415,29 @@ body {
   }
 }
 
+@media (hover: none), (max-width: 760px) {
+  .mobile-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      ". up ."
+      "left . right"
+      ". down .";
+    gap: 8px;
+    width: min(250px, 100%);
+    margin: 12px auto 0;
+  }
+}
+
 @media (max-width: 640px) {
   body,
   .page {
-    height: 100dvh;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  body {
+    overflow: auto;
   }
 
   .page {
@@ -389,14 +457,25 @@ body {
   .tooltip {
     margin-bottom: 10px;
     padding: 10px;
+    max-height: 28dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .map-shell {
+    flex: none;
     padding: 10px;
   }
 
   .map {
-    width: min(100%, calc((100dvh - 185px) * 1.23));
+    flex: none;
+    width: 100%;
+  }
+
+  .walker {
+    width: 44px;
+    height: 38px;
   }
 
   .building {
