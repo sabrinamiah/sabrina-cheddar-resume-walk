@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=8" />
+    <link rel="stylesheet" href="style.css?v=9" />
   </head>
   <body>
     <main class="page">
@@ -51,9 +51,16 @@
 
           <div id="walker" class="walker" aria-hidden="true"></div>
         </div>
+
+        <nav class="mobile-controls" aria-label="Cheddar movement controls">
+          <button class="move-button move-button-up" type="button" data-move="0,-1" aria-label="Move Cheddar up">Up</button>
+          <button class="move-button move-button-left" type="button" data-move="-1,0" aria-label="Move Cheddar left">Left</button>
+          <button class="move-button move-button-right" type="button" data-move="1,0" aria-label="Move Cheddar right">Right</button>
+          <button class="move-button move-button-down" type="button" data-move="0,1" aria-label="Move Cheddar down">Down</button>
+        </nav>
       </section>
     </main>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
   </body>
 </html>
