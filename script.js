@@ -34,6 +34,7 @@ const BLOCKED_ROAD_CELLS = new Set(
 
 const map = document.getElementById("map");
 const buildings = Array.from(document.querySelectorAll(".building"));
+const moveButtons = Array.from(document.querySelectorAll(".move-button"));
 const tipTitle = document.getElementById("tip-title");
 const tipText = document.getElementById("tip-text");
 const walker = document.getElementById("walker");
@@ -230,6 +231,15 @@ window.addEventListener("keydown", (event) => {
 
   event.preventDefault();
   moveWalkerByStep(direction[0], direction[1]);
+});
+
+moveButtons.forEach((button) => {
+  const [dx, dy] = button.dataset.move.split(",").map(Number);
+
+  button.addEventListener("click", () => {
+    moveWalkerByStep(dx, dy);
+    button.blur();
+  });
 });
 
 setWalkerCell(walkerCell.col, walkerCell.row);
