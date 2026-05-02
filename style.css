@@ -1,0 +1,413 @@
+:root {
+  --ink: #eef4ff;
+  --cyan: #61c9ff;
+  --lime: #b8ff5b;
+  --yellow: #ffd95f;
+  --path: #62a95d;
+  --path-dark: #3e7d40;
+  --block: #62a95d;
+  --grid-cols: 27;
+  --grid-rows: 22;
+  --walker-col: 2;
+  --walker-row: 11;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 18%, #17304e 0%, #09111c 46%, #030507 86%),
+    #020406;
+  color: var(--ink);
+  font-family: "VT323", monospace;
+}
+
+.page {
+  max-width: 1320px;
+  margin: 0 auto;
+  height: 100vh;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hud {
+  margin-bottom: 18px;
+}
+
+.hud h1 {
+  margin: 0 0 10px;
+  color: var(--yellow);
+  font-size: 1rem;
+  font-family: "Press Start 2P", monospace;
+  text-shadow: 0 0 14px rgba(255, 217, 95, 0.45);
+}
+
+.hud p {
+  margin: 0;
+  color: #a8dcff;
+  font-size: 1.35rem;
+}
+
+.map-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 4px solid var(--lime);
+  background: linear-gradient(180deg, #0e1929, #070d14);
+  padding: 14px;
+  box-shadow:
+    0 0 0 4px #10260d,
+    0 20px 44px rgba(0, 0, 0, 0.35);
+}
+
+.tooltip {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 3px solid var(--cyan);
+  background: linear-gradient(180deg, #12233a, #0a1626);
+  box-shadow: inset 0 0 0 3px rgba(97, 201, 255, 0.12);
+}
+
+.tooltip h2 {
+  margin: 0 0 8px;
+  color: var(--yellow);
+  font-size: 0.65rem;
+  font-family: "Press Start 2P", monospace;
+}
+
+.tooltip p {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.15;
+  color: #e0f4ff;
+}
+
+.map {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: min(100%, calc((100vh - 250px) * 1.23));
+  max-width: 100%;
+  margin: 0 auto;
+  aspect-ratio: 27 / 22;
+  border: 3px solid var(--cyan);
+  overflow: hidden;
+  image-rendering: pixelated;
+  background: linear-gradient(var(--block), var(--block));
+}
+
+.map::before {
+  content: none;
+}
+
+.map::after {
+  content: none;
+}
+
+.road-network {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--path) 0 calc((100% / var(--grid-cols)) * 2),
+      transparent calc((100% / var(--grid-cols)) * 2) calc((100% / var(--grid-cols)) * 5)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      var(--path) 0 calc((100% / var(--grid-rows)) * 2),
+      transparent calc((100% / var(--grid-rows)) * 2) calc((100% / var(--grid-rows)) * 5)
+    );
+}
+
+.road-network::before,
+.road-network::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.road-network::before {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc((100% / var(--grid-cols)) * 0.8),
+      var(--path-dark) calc((100% / var(--grid-cols)) * 0.8) calc((100% / var(--grid-cols)) * 1.2),
+      transparent calc((100% / var(--grid-cols)) * 1.2) calc((100% / var(--grid-cols)) * 5)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 calc((100% / var(--grid-rows)) * 0.8),
+      var(--path-dark) calc((100% / var(--grid-rows)) * 0.8) calc((100% / var(--grid-rows)) * 1.2),
+      transparent calc((100% / var(--grid-rows)) * 1.2) calc((100% / var(--grid-rows)) * 5)
+    );
+  opacity: 0.5;
+}
+
+.road-network::after {
+  inset: auto;
+  left: calc((15 / 27) * 100% - 1px);
+  top: calc((11.2 / 22) * 100%);
+  width: calc((2 / 27) * 100% + 2px);
+  height: calc((4.6 / 22) * 100%);
+  background: linear-gradient(var(--block), var(--block));
+}
+
+.city-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--grid-rows), minmax(0, 1fr));
+}
+
+.building {
+  grid-column: var(--col) / span var(--w);
+  grid-row: var(--row) / span var(--h);
+  position: relative;
+  margin: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  overflow: visible;
+}
+
+.building-park {
+  margin: 0;
+  background: linear-gradient(var(--block), var(--block));
+}
+
+.building::before {
+  content: "";
+  position: absolute;
+  inset: 2% 2% 18%;
+  background:
+    var(--art) center / contain no-repeat;
+  image-rendering: pixelated;
+  mix-blend-mode: darken;
+  filter:
+    saturate(1.03)
+    contrast(1.02)
+    drop-shadow(0 6px 5px rgba(0, 0, 0, 0.28));
+}
+
+.building[data-id="hospital"]::before,
+.building[data-id="park"]::before {
+  mix-blend-mode: normal;
+}
+
+.building::after {
+  content: none;
+}
+
+.building:hover,
+.building:focus-visible,
+.building.active {
+  box-shadow: none;
+}
+
+.building:focus-visible {
+  outline: none;
+}
+
+.building.active::before,
+.building:hover::before,
+.building:focus-visible::before {
+  filter:
+    saturate(1.1)
+    brightness(1.08)
+    drop-shadow(0 0 8px rgba(255, 248, 179, 0.7))
+    drop-shadow(0 0 18px rgba(255, 217, 95, 0.7))
+    drop-shadow(0 0 30px rgba(255, 217, 95, 0.45))
+    drop-shadow(0 6px 5px rgba(0, 0, 0, 0.3));
+}
+
+.building-label {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -4px;
+  z-index: 1;
+  color: #fffce6;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.95);
+}
+
+.building-park .building-label {
+  font-size: 0.78rem;
+}
+
+.walker {
+  position: absolute;
+  left: calc((var(--walker-col) - 0.5) * (100% / var(--grid-cols)));
+  top: calc((var(--walker-row) - 0.5) * (100% / var(--grid-rows)));
+  width: 64px;
+  height: 54px;
+  translate: -50% -50%;
+  z-index: 3;
+  pointer-events: none;
+  transition: left 150ms steps(2, end), top 150ms steps(2, end), transform 100ms linear;
+}
+
+.walker::before,
+.walker::after {
+  content: "";
+  position: absolute;
+}
+
+.walker::before {
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  translate: -50% 0;
+  background: url("assets/Cat-Sit.png?v=1") center bottom / contain no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.38));
+}
+
+.walker::after {
+  content: none;
+}
+
+.walker.is-walking::before {
+  width: 170%;
+  height: 170%;
+  background-image: url("assets/cat-walking.gif?v=2");
+  mix-blend-mode: darken;
+  filter: none;
+}
+
+.walker.is-walking-up::before,
+.walker.is-walking-down::before {
+  width: 72%;
+  height: 142%;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: 500% 100%;
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.32));
+  animation: cheddar-walk-vertical 450ms linear infinite;
+}
+
+.walker.is-walking-up::before {
+  background-image: url("assets/Cat-Walk-Up-Sheet.png?v=2");
+}
+
+.walker.is-walking-down::before {
+  background-image: url("assets/Cat-Walk-Down-Sheet.png?v=1");
+}
+
+@keyframes cheddar-walk-vertical {
+  0%,
+  19.999% {
+    background-position: 0 0;
+  }
+
+  20%,
+  39.999% {
+    background-position: 25% 0;
+  }
+
+  40%,
+  59.999% {
+    background-position: 50% 0;
+  }
+
+  60%,
+  79.999% {
+    background-position: 75% 0;
+  }
+
+  80%,
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 14px;
+  }
+
+  .hud p,
+  .tooltip p {
+    font-size: 1.05rem;
+  }
+
+  .map {
+    width: min(100%, calc((100vh - 220px) * 1.23));
+  }
+
+  .building {
+    margin: 2px;
+  }
+
+  .building-label {
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  body,
+  .page {
+    height: 100dvh;
+  }
+
+  .page {
+    padding: 10px;
+  }
+
+  .hud h1 {
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+  }
+
+  .hud p,
+  .tooltip p {
+    font-size: 0.92rem;
+  }
+
+  .tooltip {
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .map-shell {
+    padding: 10px;
+  }
+
+  .map {
+    width: min(100%, calc((100dvh - 185px) * 1.23));
+  }
+
+  .building {
+    margin: 1px;
+  }
+
+  .building::before {
+    inset: 1% 1% 20%;
+  }
+
+  .building-label {
+    font-size: 0.36rem;
+  }
+}
