@@ -1,23 +1,30 @@
-const locations = {
-  police: { title: "Police Station", text: "I investigate system-wide issues and track patterns to prevent recurrence. I've led large-scale spam mitigation automation to protect CRM integrity and reporting accuracy, and I investigate automations quietly failing and wasting money and credits. I advise on technically sound campaign architecture to prevent recurring problems." },
-  courthouse: { title: "Courthouse", text: "I act as a connective layer between Marketing, Sales, Product, Engineering, Web, and Legal to align stakeholders on complex initiatives. I translate business needs into scalable, compliant systems with governance oversight. I guide decisions through committee-style collaboration." },
-  recycle: { title: "Recycling and Waste", text: "I maintain the marketing and sales operations backlog and prioritize issues across Salesforce, HubSpot, Microsoft Dynamics 365, 6sense, and third-party integrations. I identify resolved issues to remove, track them via project management tools, and focus resources on high-impact problems. I realize which work has already been completed and should be cleared." },
-  post: { title: "Post Office", text: "I own lead imports, enrichment, deduplication and survivorship logic across the CRM ecosystem. I manage incoming requests and campaign troubleshooting with quick resolution. I ensure accurate output delivery and maintain clean data handoff across systems." },
-  gym: { title: "Gym", text: "I lead hands-on training for sales and marketing teams on tool usage and best practices. I research and implement enablement strategies to ensure consistent adoption across the organization. I build strength in team capability and skill development." },
-  fire: { title: "Fire Station", text: "I handle urgent campaign issues, system failures, and emergency troubleshooting across marketing technology platforms. I resolve recurring problems in partnership with vendors and platform support teams. I respond quickly to business \"fires\" and prevent downstream failures." },
-  library: { title: "Library", text: "My Platform & Software Expertise: Clay, Salesforce, HubSpot, Marketo, Microsoft Dynamics 365, RingLead, Relevance AI, Momentum, MadKudu, 6sense, Clari/Groove, LinkedIn Sales Navigator, Smartlead, LeadForensics, Google Analytics & Looker Studio, Power BI, Microsoft Excel, ZoomInfo, HG Insights, D&B, G2, Optimizely, SEMrush, Drupal 9, WordPress, GoToWebinar, Wrike, Slack, Adobe Suite" },
-  school: { title: "School", text: "I spent eight years as a teacher and tutor, and many of my students still come to me for help. I learned the importance of planning, empathy, communication, and meaningful assessments - skills that let me explain complex ideas in a simple, additive way. I'm proactive in creating process documents and video explanations to help others step into my roles." },
-  cityhall: { title: "City Hall", text: "I collaborate with marketing, sales, product, developers, and legal to establish governance, data architecture standards, and compliance frameworks. I lead committee-style decision-making on technology investments and process changes. I share new technology via mass communications and drive enablement across the organization." },
-  shop: { title: "Shop", text: "I evaluate tools for integration fit, scalability, governance, and ROI; I advise on purchase, renewal, or replacement decisions. I continuously reassess the tech stack through an ROI lens to ensure we're getting meaningful value. I scrutinize both new acquisitions and existing tools to maximize ROI." },
-  university: { title: "University", text: "I earned my Bachelor of Arts in Journalism with a German Minor from Georgia State University (2021). I completed AI for Business certification from Georgia Tech in 2025. In 2026, I was part of Clay's Alpha Forge program, an intensive GTM Engineering course for RevOps professionals." },
-  hospital: { title: "Hospital", text: "I diagnose platform and workflow issues by analyzing performance data and system health metrics. I identify root causes in CRM data architecture, unstructured data standardization, and system integration problems. I conduct deep investigations to prevent future failures." },
-  park: { title: "Park", text: "I recharge through piano, art, time with my pets, and exercise - these fuel my creativity and perspective. I network and explore emerging ideas in GTM, attending events and connecting with the community. I breathe in inspiration from both personal passions and the evolving landscape of GTM technology." },
-  museum: { title: "Museum", text: "I keep detailed records of how GTM systems and processes have evolved and transformed. I document my work automating workflows, building AI agents, and orchestrating data systems to drive revenue operations. I maintain a living archive of my GTM journey and the innovations I've implemented." },
-  bank: { title: "Bank", text: "I understand the revenue impact of marketing operations: lead quality, attribution accuracy, and clean sales handoff. I evaluate tech stack decisions through an ROI lens to maximize revenue contribution. I track the financial implications of every system decision." },
-  office: { title: "Office", text: "I bring a professional attitude and collaborate effectively with colleagues across departments. I work seamlessly with Marketing, Sales, Product, Engineering, Web, and Legal stakeholders. I practice strong cross-cultural communication to align diverse teams." },
-  bakery: { title: "Bakery", text: "I love getting into \"creative mode\" - when I'm in that zone, I aim to deliver polished, scalable outputs through precision-focused operations and systematic execution. I create bespoke AI agents and automated workflows that produce real, actionable deliverables." },
-  airport: { title: "Airport", text: "Throughout my career, I've traveled to many wonderful places. I started in education at Eye Level Learning as an English Teacher, then ran my own private tutoring studio. After graduating from GSU, I moved into GTM at Fortra as a Marketing Intern, Coordinator, and Operations Specialist. Most recently, I was a Revenue Technology Analyst at Aptean. I can't wait to see where I go next." },
-  home: { title: "Home", text: "I was born and still live in Atlanta, Georgia. I love visiting my family in Colombia and traveling in general. I am a native Spanish and English speaker, and know German up to the B1 level (I'm still learning; it's a hard language!). Some of my favorite things include playing piano, painting with watercolors, cooking, and loving on my two cats, Lulo and Cheddar. I'm passionate about making everyone I interact with feel welcomed and understood." },
+const locationEntries = [
+  ["police", { title: "Police Station", text: "I investigate system-wide issues and track patterns to prevent recurrence. I've led large-scale spam mitigation automation to protect CRM integrity and reporting accuracy, and I investigate automations quietly failing and wasting money and credits. I advise on technically sound campaign architecture to prevent recurring problems." }],
+  ["courthouse", { title: "Courthouse", text: "I act as a connective layer between Marketing, Sales, Product, Engineering, Web, and Legal to align stakeholders on complex initiatives. I translate business needs into scalable, compliant systems with governance oversight. I guide decisions through committee-style collaboration." }],
+  ["recycle", { title: "Recycling and Waste", text: "I maintain the marketing and sales operations backlog and prioritize issues across Salesforce, HubSpot, Microsoft Dynamics 365, 6sense, and third-party integrations. I identify resolved issues to remove, track them via project management tools, and focus resources on high-impact problems. I realize which work has already been completed and should be cleared." }],
+  ["post", { title: "Post Office", text: "I own lead imports, enrichment, deduplication and survivorship logic across the CRM ecosystem. I manage incoming requests and campaign troubleshooting with quick resolution. I ensure accurate output delivery and maintain clean data handoff across systems." }],
+  ["gym", { title: "Gym", text: "I lead hands-on training for sales and marketing teams on tool usage and best practices. I research and implement enablement strategies to ensure consistent adoption across the organization. I build strength in team capability and skill development." }],
+  ["fire", { title: "Fire Station", text: "I handle urgent campaign issues, system failures, and emergency troubleshooting across marketing technology platforms. I resolve recurring problems in partnership with vendors and platform support teams. I respond quickly to business \"fires\" and prevent downstream failures." }],
+  ["library", { title: "Library", text: "Platform expertise: Clay, Salesforce, HubSpot, Marketo, Microsoft Dynamics 365, RingLead, Relevance AI, Momentum, MadKudu, 6sense, Clari/Groove, LinkedIn Sales Navigator, Smartlead, LeadForensics, Google Analytics, Looker Studio, Power BI, Excel, ZoomInfo, HG Insights, D&B, G2, Optimizely, SEMrush, Drupal 9, WordPress, GoToWebinar, Wrike, Slack, and Adobe Suite." }],
+  ["school", { title: "School", text: "I spent eight years as a teacher and tutor, and many of my students still come to me for help. I learned the importance of planning, empathy, communication, and meaningful assessments, which help me explain complex ideas in a simple, additive way. I'm proactive in creating process documents and video explanations to help others step into my roles." }],
+  ["cityhall", { title: "City Hall", text: "I collaborate with marketing, sales, product, developers, and legal to establish governance, data architecture standards, and compliance frameworks. I lead committee-style decision-making on technology investments and process changes. I share new technology via mass communications and drive enablement across the organization." }],
+  ["shop", { title: "Shop", text: "I evaluate tools for integration fit, scalability, governance, and ROI, and I advise on purchase, renewal, or replacement decisions. I continuously reassess the tech stack to make sure we're getting meaningful value from every system." }],
+  ["university", { title: "University", text: "I earned my Bachelor of Arts in Journalism with a German minor from Georgia State University in 2021. I completed Georgia Tech's AI for Business certification in 2025, and in 2026 I joined Clay's Alpha Forge program, an intensive GTM Engineering course for RevOps professionals." }],
+  ["hospital", { title: "Hospital", text: "I diagnose platform and workflow issues by analyzing performance data and system health metrics. I identify root causes in CRM data architecture, unstructured data standardization, and system integration problems. I conduct deep investigations to prevent future failures." }],
+  ["park", { title: "Park", text: "I recharge through piano, art, time with my pets, and exercise, and those things fuel my creativity and perspective. I also network and explore emerging GTM ideas, staying connected to the community and its evolving technology." }],
+  ["museum", { title: "Museum", text: "I keep detailed records of how GTM systems and processes have evolved and transformed. I document my work automating workflows, building AI agents, and orchestrating data systems to drive revenue operations." }],
+  ["bank", { title: "Bank", text: "I understand the revenue impact of marketing operations: lead quality, attribution accuracy, and clean sales handoff. I evaluate tech stack decisions through an ROI lens so each system choice supports measurable business outcomes." }],
+  ["office", { title: "Office", text: "I bring a professional attitude and collaborate effectively with colleagues across departments. I work seamlessly with Marketing, Sales, Product, Engineering, Web, and Legal stakeholders, and I practice strong cross-cultural communication to align diverse teams." }],
+  ["bakery", { title: "Bakery", text: "I love getting into creative mode. When I'm in that zone, I aim to deliver polished, scalable outputs through precision-focused operations and systematic execution, including bespoke AI agents and automated workflows that produce real deliverables." }],
+  ["airport", { title: "Airport", text: "My career path has moved from education at Eye Level Learning, to running my own private tutoring studio, to GTM roles at Fortra, and then to Revenue Technology Analyst work at Aptean. I'm excited about where that journey goes next." }],
+  ["home", { title: "Home", text: "I was born and still live in Atlanta, Georgia. I love visiting my family in Colombia, traveling in general, and spending time with my cats, Lulo and Cheddar. I'm a native Spanish and English speaker, I know German up to the B1 level, and I care deeply about making people feel welcomed and understood." }],
+];
+
+const locations = Object.fromEntries(locationEntries);
+const defaultTooltip = {
+  title: "Cat Walk",
+  text: "Click on or walk Cheddar over to the building you would like to visit.",
+  meta: "Tip: click any building and Cheddar will walk there for you.",
 };
 
 const GRID_COLS = 27;
@@ -37,6 +44,7 @@ const buildings = Array.from(document.querySelectorAll(".building"));
 const moveButtons = Array.from(document.querySelectorAll(".move-button"));
 const tipTitle = document.getElementById("tip-title");
 const tipText = document.getElementById("tip-text");
+const tipMeta = document.getElementById("tip-meta");
 const walker = document.getElementById("walker");
 
 const approachCellsById = new Map();
@@ -94,6 +102,7 @@ const keyToDirection = {
 let walkerCell = { col: 2, row: 11 };
 let activeId = null;
 let catSettleTimer = null;
+let autoWalkTimer = null;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -119,8 +128,9 @@ function updateSelection(id) {
   });
 
   if (!id) {
-    tipTitle.textContent = "Cat Walk";
-    tipText.textContent = "Click on or walk Cheddar over to the building you would like to visit.";
+    tipTitle.textContent = defaultTooltip.title;
+    tipText.textContent = defaultTooltip.text;
+    tipMeta.textContent = defaultTooltip.meta;
     return;
   }
 
@@ -129,6 +139,7 @@ function updateSelection(id) {
 
   tipTitle.textContent = location.title;
   tipText.textContent = location.text;
+  tipMeta.textContent = "";
 }
 
 function chooseApproachTarget(candidateIds, dx, dy) {
@@ -181,7 +192,105 @@ function showWalkingCat(dx = 0, dy = 0) {
   }, 180);
 }
 
+function setWalkerFacing(dx, dy) {
+  if (dx !== 0) {
+    walker.style.transform = dx < 0 ? "scaleX(-1)" : "scaleX(1)";
+  } else if (dy !== 0) {
+    walker.style.transform = "scaleX(1)";
+  }
+}
+
+function findShortestPath(start, target) {
+  const startKey = `${start.col},${start.row}`;
+  const targetKey = `${target.col},${target.row}`;
+  if (startKey === targetKey) return [start];
+
+  const queue = [start];
+  const visited = new Set([startKey]);
+  const previous = new Map();
+  const directions = [
+    [0, -1],
+    [1, 0],
+    [0, 1],
+    [-1, 0],
+  ];
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    for (const [dx, dy] of directions) {
+      const nextCol = current.col + dx;
+      const nextRow = current.row + dy;
+      const nextKey = `${nextCol},${nextRow}`;
+      if (!passableCells.has(nextKey) || visited.has(nextKey)) continue;
+
+      visited.add(nextKey);
+      previous.set(nextKey, `${current.col},${current.row}`);
+
+      if (nextKey === targetKey) {
+        const path = [{ col: nextCol, row: nextRow }];
+        let cursor = `${current.col},${current.row}`;
+        while (cursor !== startKey) {
+          const [col, row] = cursor.split(",").map(Number);
+          path.push({ col, row });
+          cursor = previous.get(cursor);
+        }
+        path.push(start);
+        return path.reverse();
+      }
+
+      queue.push({ col: nextCol, row: nextRow });
+    }
+  }
+
+  return null;
+}
+
+function chooseNearestApproachTarget(id) {
+  const approachCells = approachCellsById.get(id) || [];
+  return approachCells
+    .map((cell) => ({ cell, path: findShortestPath(walkerCell, cell) }))
+    .filter((entry) => entry.path)
+    .sort((left, right) => left.path.length - right.path.length)[0] || null;
+}
+
+function stopAutoWalk() {
+  window.clearTimeout(autoWalkTimer);
+  autoWalkTimer = null;
+}
+
+function walkPath(path) {
+  if (!path || path.length <= 1) {
+    stopAutoWalk();
+    syncActiveApproach();
+    return;
+  }
+
+  stopAutoWalk();
+
+  const steps = path.slice(1);
+  const stepForward = () => {
+    const nextStep = steps.shift();
+    if (!nextStep) {
+      stopAutoWalk();
+      syncActiveApproach();
+      return;
+    }
+
+    const dx = nextStep.col - walkerCell.col;
+    const dy = nextStep.row - walkerCell.row;
+    setWalkerFacing(dx, dy);
+    setWalkerCell(nextStep.col, nextStep.row);
+    showWalkingCat(dx, dy);
+    syncActiveApproach(dx, dy);
+
+    autoWalkTimer = window.setTimeout(stepForward, 165);
+  };
+
+  stepForward();
+}
+
 function moveWalkerByStep(dx, dy) {
+  stopAutoWalk();
   const nextCol = clamp(walkerCell.col + dx, 1, GRID_COLS);
   const nextRow = clamp(walkerCell.row + dy, 1, GRID_ROWS);
   const nextCell = `${nextCol},${nextRow}`;
@@ -190,11 +299,7 @@ function moveWalkerByStep(dx, dy) {
   if (!passableCells.has(nextCell)) return;
 
   setWalkerCell(nextCol, nextRow);
-  if (dx !== 0) {
-    walker.style.transform = dx < 0 ? "scaleX(-1)" : "scaleX(1)";
-  } else if (dy !== 0) {
-    walker.style.transform = "scaleX(1)";
-  }
+  setWalkerFacing(dx, dy);
   showWalkingCat(dx, dy);
   syncActiveApproach(dx, dy);
 }
@@ -202,24 +307,13 @@ function moveWalkerByStep(dx, dy) {
 buildings.forEach((building) => {
   building.setAttribute("aria-pressed", "false");
   building.addEventListener("click", () => {
-    const approachCells = approachCellsById.get(building.dataset.id) || [];
-    const target = approachCells[0];
-
-    if (!target) {
+    const nearestTarget = chooseNearestApproachTarget(building.dataset.id);
+    if (!nearestTarget) {
       updateSelection(building.dataset.id);
       return;
     }
 
-    const dx = target.col - walkerCell.col;
-    const dy = target.row - walkerCell.row;
-    if (dx !== 0) {
-      walker.style.transform = dx < 0 ? "scaleX(-1)" : "scaleX(1)";
-    } else if (dy !== 0) {
-      walker.style.transform = "scaleX(1)";
-    }
-    setWalkerCell(target.col, target.row);
-    showWalkingCat(dx, dy);
-    syncActiveApproach();
+    walkPath(nearestTarget.path);
     building.blur();
   });
 });
