@@ -18,8 +18,10 @@
 
 body {
   margin: 0;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
   background:
     radial-gradient(circle at 50% 18%, #17304e 0%, #09111c 46%, #030507 86%),
     #020406;
@@ -28,9 +30,10 @@ body {
 }
 
 .page {
-  max-width: 1320px;
+  max-width: 1260px;
   margin: 0 auto;
-  height: 100vh;
+  width: 100%;
+  height: min(100dvh, 940px);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -54,11 +57,53 @@ body {
   font-size: 1.35rem;
 }
 
+.hud-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.hud-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 3px solid var(--cyan);
+  background: linear-gradient(180deg, #173f60, #0c1c31);
+  color: #fffce6;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.52rem;
+  line-height: 1.3;
+  text-decoration: none;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.85);
+  box-shadow:
+    inset 0 0 0 3px rgba(97, 201, 255, 0.16),
+    0 4px 0 #06101e;
+}
+
+.hud-link-button {
+  cursor: pointer;
+}
+
+.hud-link:hover,
+.hud-link:focus-visible {
+  background: linear-gradient(180deg, #1f5379, #113052);
+}
+
+.hud-link:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
 .map-shell {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  width: min(100%, 1120px);
+  margin: 0 auto;
   border: 4px solid var(--lime);
   background: linear-gradient(180deg, #0e1929, #070d14);
   padding: 14px;
@@ -73,6 +118,9 @@ body {
   border: 3px solid var(--cyan);
   background: linear-gradient(180deg, #12233a, #0a1626);
   box-shadow: inset 0 0 0 3px rgba(97, 201, 255, 0.12);
+  width: min(100%, 920px);
+  height: 196px;
+  overflow-y: auto;
 }
 
 .tooltip h2 {
@@ -89,11 +137,17 @@ body {
   color: #e0f4ff;
 }
 
+.tip-meta {
+  margin-top: 10px;
+  color: #8fd3ff;
+  font-size: 1rem;
+}
+
 .map {
   position: relative;
   flex: 1;
   min-height: 0;
-  width: min(100%, calc((100vh - 250px) * 1.23));
+  width: min(100%, 980px, calc((100vh - 280px) * 1.23));
   max-width: 100%;
   margin: 0 auto;
   aspect-ratio: 27 / 22;
@@ -222,7 +276,8 @@ body {
 }
 
 .building:focus-visible {
-  outline: none;
+  outline: 4px solid var(--yellow);
+  outline-offset: 3px;
 }
 
 .building.active::before,
@@ -235,6 +290,12 @@ body {
     drop-shadow(0 0 18px rgba(255, 217, 95, 0.7))
     drop-shadow(0 0 30px rgba(255, 217, 95, 0.45))
     drop-shadow(0 6px 5px rgba(0, 0, 0, 0.3));
+}
+
+.building.active .building-label,
+.building:focus-visible .building-label,
+.building:hover .building-label {
+  color: var(--yellow);
 }
 
 .building-label {
@@ -394,6 +455,8 @@ body {
 
 @media (max-width: 900px) {
   .page {
+    height: auto;
+    min-height: 100dvh;
     padding: 14px;
   }
 
@@ -403,7 +466,7 @@ body {
   }
 
   .map {
-    width: min(100%, calc((100vh - 220px) * 1.23));
+    width: min(100%, 900px, calc((100vh - 260px) * 1.23));
   }
 
   .building {
@@ -457,7 +520,8 @@ body {
   .tooltip {
     margin-bottom: 10px;
     padding: 10px;
-    max-height: 28dvh;
+    width: 100%;
+    height: 196px;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
@@ -465,6 +529,7 @@ body {
 
   .map-shell {
     flex: none;
+    width: min(100%, 1120px);
     padding: 10px;
   }
 
