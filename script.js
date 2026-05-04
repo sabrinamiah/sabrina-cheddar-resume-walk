@@ -562,6 +562,7 @@ let walkerCell = { col: 2, row: 11 };
 let activeId = null;
 let catSettleTimer = null;
 let autoWalkTimer = null;
+let mobileMoveInterval = null;
 let techAnimationFrame = null;
 let techLastTimestamp = null;
 
@@ -958,9 +959,34 @@ function moveWalkerByStep(dx, dy) {
   syncActiveApproach(dx, dy);
 }
 
+function stopMobileMove() {
+  if (mobileMoveInterval) {
+    window.clearInterval(mobileMoveInterval);
+    mobileMoveInterval = null;
+  }
+}
+
+function startMobileMove(dx, dy) {
+  if (currentView !== "resume-city") return;
+
+  stopMobileMove();
+  moveWalkerByStep(dx, dy);
+
+  mobileMoveInterval = window.setInterval(() => {
+    if (currentView !== "resume-city") {
+      stopMobileMove();
+      return;
+    }
+    moveWalkerByStep(dx, dy);
+  }, 130);
+}
+
 function setView(viewName) {
   if (viewName !== "data-cleanup") {
     resetCleanupFilePosition();
+  }
+  if (viewName !== "resume-city") {
+    stopMobileMove();
   }
 
   currentView = viewName;
@@ -1680,6 +1706,18 @@ moveButtons.forEach((button) => {
     moveWalkerByStep(dx, dy);
     button.blur();
   });
+
+  button.addEventListener("touchstart", (event) => {
+    startMobileMove(dx, dy);
+    event.preventDefault();
+  }, { passive: false });
+
+  button.addEventListener("touchend", () => {
+    stopMobileMove();
+    button.blur();
+  });
+
+  button.addEventListener("touchcancel", stopMobileMove);
 });
 
 techRestart.addEventListener("click", () => {
@@ -1822,6 +1860,8 @@ window.addEventListener("resize", () => {
   }
   renderTechGame();
 });
+
+window.addEventListener("touchend", stopMobileMove);
 
 setWalkerCell(walkerCell.col, walkerCell.row);
 syncActiveApproach();
