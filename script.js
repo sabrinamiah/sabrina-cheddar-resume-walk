@@ -20,11 +20,48 @@ const locationEntries = [
   ["home", { title: "Home", text: "I was born and still live in Atlanta, Georgia. I love visiting my family in Colombia, traveling in general, and spending time with my cats, Lulo and Cheddar. I'm a native Spanish and English speaker, I know German up to the B1 level, and I care deeply about making people feel welcomed and understood." }],
 ];
 
+const techLabels = [
+  "Salesforce",
+  "Microsoft Dynamics 365",
+  "Marketo",
+  "Clay",
+  "LLMs (+ vibe coding)",
+  "Relevance AI",
+  "Momentum",
+  "Kernel AI",
+  "MadKudu",
+  "6sense",
+  "Clari / Groove",
+  "LinkedIn Sales Navigator Smartlead",
+  "LeadForensics",
+  "Google Analytics & Looker Studio Power BI",
+  "Microsoft Excel",
+  "ZoomInfo, HG Insights, D&B",
+  "G2",
+  "Optimizely",
+  "SEMrush",
+  "Drupal 9",
+  "WordPress",
+  "GoToWebinar",
+  "Wrike",
+  "Slack",
+  "Adobe Suite",
+];
+
+const techShapeTemplates = [
+  { name: "I", color: "#48d0ff", matrix: [[1, 1, 1, 1]] },
+  { name: "O", color: "#ffd95f", matrix: [[1, 1], [1, 1]] },
+  { name: "T", color: "#b881ff", matrix: [[0, 1, 0], [1, 1, 1]] },
+  { name: "L", color: "#ffaf54", matrix: [[0, 0, 1], [1, 1, 1]] },
+  { name: "J", color: "#6f95ff", matrix: [[1, 0, 0], [1, 1, 1]] },
+  { name: "S", color: "#7fe48e", matrix: [[0, 1, 1], [1, 1, 0]] },
+  { name: "Z", color: "#ff7886", matrix: [[1, 1, 0], [0, 1, 1]] },
+];
+
 const locations = Object.fromEntries(locationEntries);
 
 const GRID_COLS = 27;
 const GRID_ROWS = 22;
-// Two-cell road bands split each shared street into upper/lower or left/right halves.
 const ROAD_COL_BANDS = [1, 6, 11, 16, 21, 26];
 const ROAD_ROW_BANDS = [1, 6, 11, 16, 21];
 const ROAD_COLS = ROAD_COL_BANDS.flatMap((start) => [start, start + 1]);
@@ -33,6 +70,10 @@ const PARK_PATH_GAP_ROWS = [13, 14, 15];
 const BLOCKED_ROAD_CELLS = new Set(
   PARK_PATH_GAP_ROWS.flatMap((row) => [`16,${row}`, `17,${row}`]),
 );
+
+const TECH_COLS = 10;
+const TECH_ROWS = 18;
+const TECH_BASE_DROP_MS = 900;
 
 const map = document.getElementById("map");
 const buildings = Array.from(document.querySelectorAll(".building"));
@@ -43,10 +84,60 @@ const popupText = document.getElementById("popup-text");
 const popupClose = document.getElementById("popup-close");
 const walker = document.getElementById("walker");
 
+const viewButtons = Array.from(document.querySelectorAll("[data-view-target]"));
+const viewPanels = Array.from(document.querySelectorAll("[data-view-panel]"));
+
+const techBoard = document.getElementById("tech-board");
+const techScore = document.getElementById("tech-score");
+const techLines = document.getElementById("tech-lines");
+const techLevel = document.getElementById("tech-level");
+const techCurrentLabel = document.getElementById("tech-current-label");
+const techNextLabel = document.getElementById("tech-next-label");
+const techStatus = document.getElementById("tech-status");
+const techRestart = document.getElementById("tech-restart");
+const techControlButtons = Array.from(document.querySelectorAll("[data-tech-action]"));
+
 const approachCellsById = new Map();
 const approachCellToIds = new Map();
 const buildingCenters = new Map();
 const passableCells = new Set();
+
+const keyToDirection = {
+  ArrowUp: [0, -1],
+  ArrowDown: [0, 1],
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0],
+  w: [0, -1],
+  a: [-1, 0],
+  s: [0, 1],
+  d: [1, 0],
+};
+
+let currentView = "resume-city";
+let walkerCell = { col: 2, row: 11 };
+let activeId = null;
+let catSettleTimer = null;
+let autoWalkTimer = null;
+let techAnimationFrame = null;
+let techLastTimestamp = null;
+
+const techState = {
+  board: createEmptyBoard(),
+  pieces: new Map(),
+  activePiece: null,
+  nextPiece: null,
+  score: 0,
+  lines: 0,
+  level: 1,
+  paused: false,
+  gameOver: false,
+  pendingDropMs: 0,
+  dropIntervalMs: TECH_BASE_DROP_MS,
+  pieceCounter: 0,
+};
+
+let techShapeBag = [];
+let techLabelBag = [];
 
 for (let col = 1; col <= GRID_COLS; col += 1) {
   for (let row = 1; row <= GRID_ROWS; row += 1) {
@@ -75,6 +166,7 @@ buildings.forEach((building) => {
     col: col + (width - 1) / 2,
     row: row + (height - 1) / 2,
   });
+
   cells.forEach((cell) => {
     const key = `${cell.col},${cell.row}`;
     if (!approachCellToIds.has(key)) {
@@ -84,24 +176,88 @@ buildings.forEach((building) => {
   });
 });
 
-const keyToDirection = {
-  ArrowUp: [0, -1],
-  ArrowDown: [0, 1],
-  ArrowLeft: [-1, 0],
-  ArrowRight: [1, 0],
-  w: [0, -1],
-  a: [-1, 0],
-  s: [0, 1],
-  d: [1, 0],
-};
-
-let walkerCell = { col: 2, row: 11 };
-let activeId = null;
-let catSettleTimer = null;
-let autoWalkTimer = null;
-
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function shuffle(list) {
+  const result = [...list];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
+function cloneMatrix(matrix) {
+  return matrix.map((row) => [...row]);
+}
+
+function createEmptyBoard() {
+  return Array.from({ length: TECH_ROWS }, () => Array(TECH_COLS).fill(null));
+}
+
+function createShapeBag() {
+  return shuffle(techShapeTemplates);
+}
+
+function drawShapeTemplate() {
+  if (techShapeBag.length === 0) {
+    techShapeBag = createShapeBag();
+  }
+
+  return techShapeBag.pop();
+}
+
+function drawTechLabel() {
+  if (techLabelBag.length === 0) {
+    techLabelBag = shuffle(techLabels);
+  }
+
+  return techLabelBag.pop();
+}
+
+function createTechPiece() {
+  const template = drawShapeTemplate();
+  const matrix = cloneMatrix(template.matrix);
+  const width = matrix[0].length;
+
+  return {
+    id: `piece-${techState.pieceCounter += 1}`,
+    label: drawTechLabel(),
+    color: template.color,
+    x: Math.floor((TECH_COLS - width) / 2),
+    y: 0,
+    matrix,
+  };
+}
+
+function pieceCells(piece, offsetX = piece.x, offsetY = piece.y, matrix = piece.matrix) {
+  const cells = [];
+
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (!value) return;
+      cells.push({ x: offsetX + colIndex, y: offsetY + rowIndex });
+    });
+  });
+
+  return cells;
+}
+
+function rotateMatrixClockwise(matrix) {
+  return matrix[0].map((_, colIndex) =>
+    matrix.map((row) => row[colIndex]).reverse(),
+  );
+}
+
+function collides(piece, offsetX = piece.x, offsetY = piece.y, matrix = piece.matrix) {
+  return pieceCells(piece, offsetX, offsetY, matrix).some((cell) => {
+    if (cell.x < 0 || cell.x >= TECH_COLS) return true;
+    if (cell.y >= TECH_ROWS) return true;
+    if (cell.y < 0) return false;
+    return techState.board[cell.y][cell.x] !== null;
+  });
 }
 
 function setWalkerCell(col, row) {
@@ -336,6 +492,382 @@ function moveWalkerByStep(dx, dy) {
   syncActiveApproach(dx, dy);
 }
 
+function setView(viewName) {
+  currentView = viewName;
+
+  viewButtons.forEach((button) => {
+    const isActive = button.dataset.viewTarget === viewName;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  viewPanels.forEach((panel) => {
+    const isActive = panel.dataset.viewPanel === viewName;
+    panel.hidden = !isActive;
+    panel.classList.toggle("is-active", isActive);
+  });
+
+  if (viewName === "tech-stack") {
+    resumeTechGame();
+    renderTechGame();
+  } else {
+    pauseTechGame("Tech Stack is paused while you explore Resume City.");
+    if (activeId) {
+      positionPopup(activeId);
+    }
+  }
+}
+
+function updateTechHud() {
+  techScore.textContent = String(techState.score);
+  techLines.textContent = String(techState.lines);
+  techLevel.textContent = String(techState.level);
+  techCurrentLabel.textContent = techState.activePiece ? techState.activePiece.label : "Waiting for next stack";
+  techNextLabel.textContent = techState.nextPiece ? techState.nextPiece.label : "Loading next stack";
+
+  if (techState.gameOver) {
+    techStatus.textContent = "Board overflow. Hit Restart Run to launch another stack.";
+    return;
+  }
+
+  if (techState.paused && currentView === "tech-stack") {
+    techStatus.textContent = "Paused. Press P or use the controls to jump back in.";
+    return;
+  }
+
+  if (currentView !== "tech-stack") {
+    techStatus.textContent = "Tech Stack is paused while you explore Resume City.";
+    return;
+  }
+
+  techStatus.textContent = "Stack clean rows to keep the board under control.";
+}
+
+function fontSizeForPiece(label, widthCells, heightCells) {
+  const base = (widthCells * 5) + (heightCells * 2);
+  const penalty = Math.ceil(label.length / 7);
+  return clamp(base - penalty + 4, 7, 12);
+}
+
+function createPieceElement(piece, active = false) {
+  const cells = piece.cells ? piece.cells.map((cell) => ({ ...cell })) : pieceCells(piece);
+  if (cells.length === 0) return null;
+
+  const minX = Math.min(...cells.map((cell) => cell.x));
+  const maxX = Math.max(...cells.map((cell) => cell.x));
+  const minY = Math.min(...cells.map((cell) => cell.y));
+  const maxY = Math.max(...cells.map((cell) => cell.y));
+  const widthCells = maxX - minX + 1;
+  const heightCells = maxY - minY + 1;
+
+  const pieceElement = document.createElement("div");
+  pieceElement.className = `tech-piece${active ? " is-active" : ""}`;
+  pieceElement.style.left = `${(minX / TECH_COLS) * 100}%`;
+  pieceElement.style.top = `${(minY / TECH_ROWS) * 100}%`;
+  pieceElement.style.width = `${(widthCells / TECH_COLS) * 100}%`;
+  pieceElement.style.height = `${(heightCells / TECH_ROWS) * 100}%`;
+
+  cells.forEach((cell) => {
+    const cellElement = document.createElement("div");
+    cellElement.className = "tech-piece-cell";
+    cellElement.style.left = `${((cell.x - minX) / widthCells) * 100}%`;
+    cellElement.style.top = `${((cell.y - minY) / heightCells) * 100}%`;
+    cellElement.style.width = `${100 / widthCells}%`;
+    cellElement.style.height = `${100 / heightCells}%`;
+    cellElement.style.background = `linear-gradient(180deg, ${piece.color}, color-mix(in srgb, ${piece.color} 66%, #101828))`;
+    pieceElement.append(cellElement);
+  });
+
+  const labelElement = document.createElement("div");
+  labelElement.className = "tech-piece-label";
+  labelElement.textContent = piece.label;
+  labelElement.style.fontSize = `${fontSizeForPiece(piece.label, widthCells, heightCells)}px`;
+  pieceElement.append(labelElement);
+
+  return pieceElement;
+}
+
+function renderTechGame() {
+  techBoard.replaceChildren();
+
+  techState.pieces.forEach((piece) => {
+    const pieceElement = createPieceElement(piece);
+    if (pieceElement) {
+      techBoard.append(pieceElement);
+    }
+  });
+
+  if (techState.activePiece) {
+    const activePieceElement = createPieceElement(techState.activePiece, true);
+    if (activePieceElement) {
+      techBoard.append(activePieceElement);
+    }
+  }
+
+  updateTechHud();
+}
+
+function updateDropSpeed() {
+  techState.level = 1 + Math.floor(techState.lines / 5);
+  techState.dropIntervalMs = clamp(TECH_BASE_DROP_MS - ((techState.level - 1) * 70), 150, TECH_BASE_DROP_MS);
+}
+
+function rebuildLockedPiecesFromBoard() {
+  const nextPieces = new Map();
+
+  for (let row = 0; row < TECH_ROWS; row += 1) {
+    for (let col = 0; col < TECH_COLS; col += 1) {
+      const pieceId = techState.board[row][col];
+      if (!pieceId) continue;
+
+      const existing = nextPieces.get(pieceId) || techState.pieces.get(pieceId);
+      if (!existing) continue;
+
+      if (!nextPieces.has(pieceId)) {
+        nextPieces.set(pieceId, {
+          id: existing.id,
+          label: existing.label,
+          color: existing.color,
+          x: 0,
+          y: 0,
+          matrix: [[1]],
+          cells: [],
+        });
+      }
+
+      nextPieces.get(pieceId).cells.push({ x: col, y: row });
+    }
+  }
+
+  techState.pieces = nextPieces;
+}
+
+function clearCompletedRows() {
+  const fullRows = [];
+
+  for (let row = 0; row < TECH_ROWS; row += 1) {
+    if (techState.board[row].every(Boolean)) {
+      fullRows.push(row);
+    }
+  }
+
+  if (fullRows.length === 0) return;
+
+  const clearedRowSet = new Set(fullRows);
+  const nextBoard = createEmptyBoard();
+  let writeRow = TECH_ROWS - 1;
+
+  for (let row = TECH_ROWS - 1; row >= 0; row -= 1) {
+    if (clearedRowSet.has(row)) continue;
+    nextBoard[writeRow] = [...techState.board[row]];
+    writeRow -= 1;
+  }
+
+  techState.board = nextBoard;
+  rebuildLockedPiecesFromBoard();
+
+  techState.lines += fullRows.length;
+  techState.score += [0, 120, 320, 520, 900][fullRows.length] * techState.level;
+  updateDropSpeed();
+}
+
+function lockActivePiece() {
+  if (!techState.activePiece) return;
+
+  const piece = techState.activePiece;
+  const cells = pieceCells(piece).filter((cell) => cell.y >= 0);
+  techState.pieces.set(piece.id, {
+    id: piece.id,
+    label: piece.label,
+    color: piece.color,
+    x: piece.x,
+    y: piece.y,
+    matrix: cloneMatrix(piece.matrix),
+    cells,
+  });
+
+  cells.forEach((cell) => {
+    techState.board[cell.y][cell.x] = piece.id;
+  });
+
+  techState.activePiece = null;
+  clearCompletedRows();
+}
+
+function spawnNextTechPiece() {
+  if (!techState.nextPiece) {
+    techState.nextPiece = createTechPiece();
+  }
+
+  techState.activePiece = techState.nextPiece;
+  techState.activePiece.x = Math.floor((TECH_COLS - techState.activePiece.matrix[0].length) / 2);
+  techState.activePiece.y = 0;
+  techState.nextPiece = createTechPiece();
+  techState.pendingDropMs = 0;
+
+  if (collides(techState.activePiece)) {
+    techState.gameOver = true;
+    techState.paused = true;
+  }
+
+  renderTechGame();
+}
+
+function moveTechPiece(dx, dy) {
+  if (!techState.activePiece || techState.gameOver) return false;
+
+  const nextX = techState.activePiece.x + dx;
+  const nextY = techState.activePiece.y + dy;
+  if (collides(techState.activePiece, nextX, nextY)) {
+    if (dy > 0) {
+      lockActivePiece();
+      spawnNextTechPiece();
+    }
+    return false;
+  }
+
+  techState.activePiece.x = nextX;
+  techState.activePiece.y = nextY;
+  renderTechGame();
+  return true;
+}
+
+function rotateTechPiece() {
+  if (!techState.activePiece || techState.gameOver) return;
+
+  const rotated = rotateMatrixClockwise(techState.activePiece.matrix);
+  const kicks = [0, -1, 1, -2, 2];
+
+  for (const kick of kicks) {
+    const nextX = techState.activePiece.x + kick;
+    if (!collides(techState.activePiece, nextX, techState.activePiece.y, rotated)) {
+      techState.activePiece.matrix = rotated;
+      techState.activePiece.x = nextX;
+      renderTechGame();
+      return;
+    }
+  }
+}
+
+function hardDropTechPiece() {
+  if (!techState.activePiece || techState.gameOver) return;
+
+  let dropDistance = 0;
+  while (moveTechPiece(0, 1)) {
+    dropDistance += 1;
+  }
+
+  techState.score += dropDistance * 2;
+  renderTechGame();
+}
+
+function toggleTechPause() {
+  if (techState.gameOver) return;
+  techState.paused = !techState.paused;
+  renderTechGame();
+}
+
+function pauseTechGame(message) {
+  techState.paused = true;
+  if (message) {
+    techStatus.textContent = message;
+  }
+}
+
+function resumeTechGame() {
+  if (techState.gameOver) {
+    renderTechGame();
+    return;
+  }
+
+  techState.paused = false;
+  if (!techState.activePiece) {
+    spawnNextTechPiece();
+  } else {
+    renderTechGame();
+  }
+
+  if (!techAnimationFrame) {
+    techLastTimestamp = null;
+    techAnimationFrame = window.requestAnimationFrame(stepTechGame);
+  }
+}
+
+function resetTechGame() {
+  techState.board = createEmptyBoard();
+  techState.pieces = new Map();
+  techState.activePiece = null;
+  techState.nextPiece = createTechPiece();
+  techState.score = 0;
+  techState.lines = 0;
+  techState.level = 1;
+  techState.pendingDropMs = 0;
+  techState.dropIntervalMs = TECH_BASE_DROP_MS;
+  techState.gameOver = false;
+  techState.paused = currentView !== "tech-stack";
+  spawnNextTechPiece();
+
+  if (currentView === "tech-stack") {
+    resumeTechGame();
+  } else {
+    renderTechGame();
+  }
+}
+
+function stepTechGame(timestamp) {
+  if (!techAnimationFrame) return;
+
+  if (techLastTimestamp === null) {
+    techLastTimestamp = timestamp;
+  }
+
+  const delta = timestamp - techLastTimestamp;
+  techLastTimestamp = timestamp;
+
+  if (!techState.paused && !techState.gameOver && currentView === "tech-stack") {
+    techState.pendingDropMs += delta;
+
+    if (techState.pendingDropMs >= techState.dropIntervalMs) {
+      techState.pendingDropMs = 0;
+      moveTechPiece(0, 1);
+    }
+  }
+
+  techAnimationFrame = window.requestAnimationFrame(stepTechGame);
+}
+
+function handleTechAction(action) {
+  if (currentView !== "tech-stack") return;
+
+  switch (action) {
+    case "left":
+      moveTechPiece(-1, 0);
+      break;
+    case "right":
+      moveTechPiece(1, 0);
+      break;
+    case "down":
+      moveTechPiece(0, 1);
+      break;
+    case "rotate":
+      rotateTechPiece();
+      break;
+    case "drop":
+      hardDropTechPiece();
+      break;
+    default:
+      break;
+  }
+}
+
+viewButtons.forEach((button) => {
+  button.setAttribute("aria-pressed", String(button.dataset.viewTarget === currentView));
+  button.addEventListener("click", () => {
+    setView(button.dataset.viewTarget);
+    button.blur();
+  });
+});
+
 buildings.forEach((building) => {
   building.setAttribute("aria-pressed", "false");
   building.addEventListener("click", (event) => {
@@ -368,29 +900,79 @@ map.addEventListener("click", (event) => {
   updateSelection(null);
 });
 
-window.addEventListener("keydown", (event) => {
-  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-  const direction = keyToDirection[key];
-  if (!direction) return;
-
-  event.preventDefault();
-  moveWalkerByStep(direction[0], direction[1]);
-});
-
 moveButtons.forEach((button) => {
   const [dx, dy] = button.dataset.move.split(",").map(Number);
-
   button.addEventListener("click", () => {
+    if (currentView !== "resume-city") return;
     moveWalkerByStep(dx, dy);
     button.blur();
   });
 });
 
+techRestart.addEventListener("click", () => {
+  resetTechGame();
+  techRestart.blur();
+});
+
+techControlButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    handleTechAction(button.dataset.techAction);
+    button.blur();
+  });
+});
+
+window.addEventListener("keydown", (event) => {
+  const activeTag = document.activeElement?.tagName;
+  if (activeTag === "BUTTON" || activeTag === "A") {
+    if (event.key === " " || event.key === "Spacebar") {
+      event.preventDefault();
+    }
+  }
+
+  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+
+  if (currentView === "resume-city") {
+    const direction = keyToDirection[key];
+    if (!direction) return;
+
+    event.preventDefault();
+    moveWalkerByStep(direction[0], direction[1]);
+    return;
+  }
+
+  if (currentView !== "tech-stack") return;
+
+  if (key === "ArrowLeft") {
+    event.preventDefault();
+    moveTechPiece(-1, 0);
+  } else if (key === "ArrowRight") {
+    event.preventDefault();
+    moveTechPiece(1, 0);
+  } else if (key === "ArrowDown") {
+    event.preventDefault();
+    moveTechPiece(0, 1);
+  } else if (key === "ArrowUp") {
+    event.preventDefault();
+    rotateTechPiece();
+  } else if (key === " " || key === "Spacebar") {
+    event.preventDefault();
+    hardDropTechPiece();
+  } else if (key === "p") {
+    event.preventDefault();
+    toggleTechPause();
+  }
+});
+
 window.addEventListener("resize", () => {
-  if (activeId) {
+  if (activeId && currentView === "resume-city") {
     positionPopup(activeId);
   }
+  renderTechGame();
 });
 
 setWalkerCell(walkerCell.col, walkerCell.row);
 syncActiveApproach();
+resetTechGame();
+setView("resume-city");
+techLastTimestamp = null;
+techAnimationFrame = window.requestAnimationFrame(stepTechGame);
