@@ -144,6 +144,12 @@ body {
   gap: 16px;
 }
 
+.signal-sort-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .view-heading {
   display: flex;
   flex-direction: column;
@@ -599,6 +605,209 @@ body {
   outline-offset: 2px;
 }
 
+.signal-shell {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.signal-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.signal-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.signal-stat-card,
+.signal-progress-card,
+.signal-card-stage,
+.signal-feedback {
+  border: 3px solid #ffcf5c;
+  background: linear-gradient(180deg, rgba(33, 46, 77, 0.92), rgba(12, 18, 31, 0.92));
+  box-shadow: inset 0 0 0 3px rgba(255, 217, 95, 0.08);
+}
+
+.signal-stat-card {
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.signal-stat-card strong {
+  display: block;
+  margin-top: 6px;
+  color: #fff7c8;
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.signal-progress-card {
+  padding: 12px;
+}
+
+.signal-progress-text {
+  margin: 8px 0 0;
+  color: #e9f6ff;
+  font-size: 1.08rem;
+  line-height: 1.14;
+}
+
+.signal-restart,
+.signal-next {
+  width: 100%;
+}
+
+.signal-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.signal-card-stage {
+  padding: 14px;
+}
+
+.signal-card-header {
+  margin-bottom: 10px;
+}
+
+.signal-card {
+  min-height: 200px;
+  padding: 18px;
+  border: 3px solid #c48516;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 241, 185, 0.26), transparent 40%),
+    linear-gradient(180deg, #ffe67c 0%, #ffcc48 100%);
+  color: #4c2c00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 248, 215, 0.35),
+    0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.signal-card p {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.2;
+}
+
+.signal-lanes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.signal-lane-button {
+  min-height: 72px;
+  padding: 14px 16px;
+  border: 3px solid #61c9ff;
+  background: linear-gradient(180deg, #173f60, #0c1c31);
+  color: #fffce6;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.56rem;
+  line-height: 1.35;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.9);
+  box-shadow:
+    inset 0 0 0 3px rgba(97, 201, 255, 0.16),
+    0 4px 0 #06101e;
+}
+
+.signal-lane-button:last-child {
+  grid-column: 1 / -1;
+}
+
+.signal-lane-button:hover,
+.signal-lane-button:focus-visible {
+  background: linear-gradient(180deg, #1f5379, #113052);
+}
+
+.signal-lane-button:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+.signal-lane-button.is-locked {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.signal-lane-button.is-correct {
+  border-color: #8df09a;
+  background: linear-gradient(180deg, #1f6433, #11341b);
+  box-shadow:
+    inset 0 0 0 3px rgba(141, 240, 154, 0.18),
+    0 4px 0 #0b1f10;
+}
+
+.signal-lane-button.is-wrong {
+  border-color: #ff8e9b;
+  background: linear-gradient(180deg, #6b2733, #381119);
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 142, 155, 0.16),
+    0 4px 0 #22080d;
+}
+
+.signal-feedback {
+  padding: 14px;
+}
+
+.signal-feedback-title,
+.signal-feedback-text {
+  margin: 0;
+}
+
+.signal-feedback-title {
+  color: #fff4bf;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.56rem;
+  line-height: 1.5;
+}
+
+.signal-feedback-text {
+  margin-top: 10px;
+  color: #dceeff;
+  font-size: 1.08rem;
+  line-height: 1.15;
+}
+
+.signal-feedback.is-success {
+  border-color: #8df09a;
+  box-shadow: inset 0 0 0 3px rgba(141, 240, 154, 0.08);
+}
+
+.signal-feedback.is-success .signal-feedback-title {
+  color: #bbffd2;
+}
+
+.signal-feedback.is-error {
+  border-color: #ff9aaa;
+  box-shadow: inset 0 0 0 3px rgba(255, 154, 170, 0.08);
+}
+
+.signal-feedback.is-error .signal-feedback-title {
+  color: #ffd0d6;
+}
+
+.signal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.signal-next[disabled] {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .building[data-id="hospital"]::before,
 .building[data-id="park"]::before {
   mix-blend-mode: normal;
@@ -818,6 +1027,10 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .signal-shell {
+    grid-template-columns: 1fr;
+  }
+
   .tech-sidebar {
     order: 3;
   }
@@ -828,6 +1041,14 @@ body {
 
   .tech-touch-controls {
     order: 2;
+  }
+
+  .signal-sidebar {
+    order: 2;
+  }
+
+  .signal-main {
+    order: 1;
   }
 
   .building {
@@ -872,6 +1093,14 @@ body {
   .tech-control-button-wide {
     grid-column: auto;
   }
+
+  .signal-lanes {
+    grid-template-columns: 1fr;
+  }
+
+  .signal-lane-button:last-child {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -910,7 +1139,9 @@ body {
   .view-description,
   .tech-label-readout,
   .tech-controls-copy,
-  .tech-status {
+  .tech-status,
+  .signal-progress-text,
+  .signal-feedback-text {
     font-size: 0.92rem;
   }
 
@@ -952,6 +1183,25 @@ body {
     min-height: 54px;
     font-size: 0.44rem;
     line-height: 1.15;
+  }
+
+  .signal-card {
+    min-height: 170px;
+    padding: 14px;
+  }
+
+  .signal-card p {
+    font-size: 1.2rem;
+  }
+
+  .signal-lane-button {
+    min-height: 60px;
+    padding: 12px;
+    font-size: 0.46rem;
+  }
+
+  .signal-feedback-title {
+    font-size: 0.5rem;
   }
 
   .walker {
