@@ -563,6 +563,7 @@ let activeId = null;
 let catSettleTimer = null;
 let autoWalkTimer = null;
 let mobileMoveInterval = null;
+let techTouchInterval = null;
 let techAnimationFrame = null;
 let techLastTimestamp = null;
 
@@ -981,12 +982,22 @@ function startMobileMove(dx, dy) {
   }, 130);
 }
 
+function stopTechTouchAction() {
+  if (techTouchInterval) {
+    window.clearInterval(techTouchInterval);
+    techTouchInterval = null;
+  }
+}
+
 function setView(viewName) {
   if (viewName !== "data-cleanup") {
     resetCleanupFilePosition();
   }
   if (viewName !== "resume-city") {
     stopMobileMove();
+  }
+  if (viewName !== "tech-stack") {
+    stopTechTouchAction();
   }
 
   currentView = viewName;
@@ -1726,10 +1737,34 @@ techRestart.addEventListener("click", () => {
 });
 
 techControlButtons.forEach((button) => {
+  const action = button.dataset.techAction;
   button.addEventListener("click", () => {
-    handleTechAction(button.dataset.techAction);
+    handleTechAction(action);
     button.blur();
   });
+
+  if (!["left", "right", "down"].includes(action)) return;
+
+  button.addEventListener("touchstart", (event) => {
+    if (currentView !== "tech-stack") return;
+    stopTechTouchAction();
+    handleTechAction(action);
+    techTouchInterval = window.setInterval(() => {
+      if (currentView !== "tech-stack") {
+        stopTechTouchAction();
+        return;
+      }
+      handleTechAction(action);
+    }, 110);
+    event.preventDefault();
+  }, { passive: false });
+
+  button.addEventListener("touchend", () => {
+    stopTechTouchAction();
+    button.blur();
+  });
+
+  button.addEventListener("touchcancel", stopTechTouchAction);
 });
 
 signalLaneButtons.forEach((button) => {
@@ -1862,6 +1897,7 @@ window.addEventListener("resize", () => {
 });
 
 window.addEventListener("touchend", stopMobileMove);
+window.addEventListener("touchend", stopTechTouchAction);
 
 setWalkerCell(walkerCell.col, walkerCell.row);
 syncActiveApproach();
