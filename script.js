@@ -48,6 +48,29 @@ const techLabels = [
   "Adobe Suite",
 ];
 
+const signalSortCards = [
+  { card: "A company has $100M in annual revenue", category: "Firmographic Fit", feedback: "Revenue size suggests this account fits a defined target market." },
+  { card: "A company has 1,200 employees", category: "Firmographic Fit", feedback: "Employee count helps qualify company size and market segment." },
+  { card: "A company has a mature marketing team with many functions", category: "Firmographic Fit", feedback: "Org structure shows operational maturity and likely buying readiness." },
+  { card: "A company has a dedicated RevOps function", category: "Firmographic Fit", feedback: "Team makeup signals process maturity and stronger GTM infrastructure." },
+  { card: "A company uses Salesforce", category: "Technographic Fit", feedback: "CRM usage is a key stack signal for compatibility and targeting." },
+  { card: "A company does not use 6Sense", category: "Technographic Fit", feedback: "Missing intent tooling can signal whitespace or upsell opportunity." },
+  { card: "A company recently installed Marketo", category: "Technographic Fit", feedback: "New platform adoption is a strong signal about current GTM systems." },
+  { card: "A company uses Microsoft Dynamics 365", category: "Technographic Fit", feedback: "Existing systems help shape fit, messaging, and workflow design." },
+  { card: "A CEO changes", category: "Hiring Signal", feedback: "Executive changes often trigger strategic shifts and new buying behavior." },
+  { card: "A company is hiring for GTM Engineer", category: "Hiring Signal", feedback: "This role suggests investment in modern revenue systems and automation." },
+  { card: "A company posts its first RevOps role", category: "Hiring Signal", feedback: "First-time ops hiring signals a new operational growth phase." },
+  { card: "A new VP of Marketing joins", category: "Hiring Signal", feedback: "A new leader often brings fresh priorities, tools, and vendor openness." },
+  { card: "A company just had layoffs", category: "Risk", feedback: "Layoffs can indicate contraction, budget pressure, or organizational instability." },
+  { card: "A company freezes hiring across departments", category: "Risk", feedback: "Hiring freezes often point to caution, reduced spend, or internal risk." },
+  { card: "A company closes a regional office", category: "Risk", feedback: "Office closures can indicate contraction or strategic pullback." },
+  { card: "A company cuts marketing budget by 30%", category: "Risk", feedback: "Budget cuts often signal lower near-term spend and reduced GTM investment." },
+  { card: "A company just received $35M in funding", category: "Growth Signal", feedback: "Fresh funding usually increases capacity for hiring, tooling, and expansion." },
+  { card: "A company has many roles open", category: "Growth Signal", feedback: "Broad hiring volume often signals expansion and momentum." },
+  { card: "A major retailer lists a new company in their catalogue", category: "Growth Signal", feedback: "New distribution or channel reach is a strong expansion signal." },
+  { card: "A company launches a new product line", category: "Growth Signal", feedback: "Product expansion often creates new GTM needs and budget opportunities." },
+];
+
 const techShapeTemplates = [
   { name: "I", color: "#48d0ff", matrix: [[1, 1, 1, 1]] },
   { name: "O", color: "#ffd95f", matrix: [[1, 1], [1, 1]] },
@@ -96,6 +119,17 @@ const techNextLabel = document.getElementById("tech-next-label");
 const techStatus = document.getElementById("tech-status");
 const techRestart = document.getElementById("tech-restart");
 const techControlButtons = Array.from(document.querySelectorAll("[data-tech-action]"));
+const signalScore = document.getElementById("signal-score");
+const signalCorrect = document.getElementById("signal-correct");
+const signalStreak = document.getElementById("signal-streak");
+const signalProgress = document.getElementById("signal-progress");
+const signalCardText = document.getElementById("signal-card-text");
+const signalFeedback = document.getElementById("signal-feedback");
+const signalFeedbackTitle = document.getElementById("signal-feedback-title");
+const signalFeedbackText = document.getElementById("signal-feedback-text");
+const signalLaneButtons = Array.from(document.querySelectorAll("[data-signal-category]"));
+const signalNext = document.getElementById("signal-next");
+const signalRestart = document.getElementById("signal-restart");
 
 const approachCellsById = new Map();
 const approachCellToIds = new Map();
@@ -134,6 +168,16 @@ const techState = {
   pendingDropMs: 0,
   dropIntervalMs: TECH_BASE_DROP_MS,
   pieceCounter: 0,
+};
+
+const signalSortState = {
+  deck: [],
+  currentIndex: 0,
+  score: 0,
+  correct: 0,
+  streak: 0,
+  answered: false,
+  finished: false,
 };
 
 let techShapeBag = [];
@@ -515,7 +559,121 @@ function setView(viewName) {
     if (activeId) {
       positionPopup(activeId);
     }
+
+    if (viewName === "signal-sort") {
+      renderSignalSort();
+    }
   }
+}
+
+function updateSignalLaneButtons(selectedCategory = null, correctCategory = null) {
+  signalLaneButtons.forEach((button) => {
+    const isSelected = button.dataset.signalCategory === selectedCategory;
+    const isCorrect = button.dataset.signalCategory === correctCategory;
+
+    button.classList.remove("is-correct", "is-wrong", "is-locked");
+
+    if (signalSortState.answered || signalSortState.finished) {
+      button.classList.add("is-locked");
+    }
+
+    if (!signalSortState.answered) return;
+
+    if (isCorrect) {
+      button.classList.add("is-correct");
+    } else if (isSelected) {
+      button.classList.add("is-wrong");
+    }
+  });
+}
+
+function getCurrentSignalCard() {
+  return signalSortState.deck[signalSortState.currentIndex] || null;
+}
+
+function renderSignalSort() {
+  signalScore.textContent = String(signalSortState.score);
+  signalCorrect.textContent = String(signalSortState.correct);
+  signalStreak.textContent = String(signalSortState.streak);
+
+  if (signalSortState.finished) {
+    signalProgress.textContent = `Deck complete: ${signalSortState.correct} of ${signalSortState.deck.length} correct`;
+    signalCardText.textContent = "Deck complete. Restart the deck to sort another round of Clay signals.";
+    signalFeedback.classList.remove("is-success", "is-error");
+    signalFeedbackTitle.textContent = "Round complete.";
+    signalFeedbackText.textContent = `Final score: ${signalSortState.score}. You classified ${signalSortState.correct} of ${signalSortState.deck.length} signals correctly.`;
+    signalNext.disabled = true;
+    updateSignalLaneButtons();
+    return;
+  }
+
+  const card = getCurrentSignalCard();
+  if (!card) return;
+
+  signalProgress.textContent = `Card ${signalSortState.currentIndex + 1} of ${signalSortState.deck.length}`;
+  signalCardText.textContent = card.card;
+  signalNext.disabled = !signalSortState.answered;
+
+  if (!signalSortState.answered) {
+    signalFeedback.classList.remove("is-success", "is-error");
+    signalFeedbackTitle.textContent = "Sort the card into the strongest-fit lane.";
+    signalFeedbackText.textContent = "Use the lane buttons below, or press number keys 1 through 5.";
+    updateSignalLaneButtons();
+  }
+}
+
+function submitSignalChoice(category) {
+  if (currentView !== "signal-sort" || signalSortState.answered || signalSortState.finished) return;
+
+  const card = getCurrentSignalCard();
+  if (!card) return;
+
+  signalSortState.answered = true;
+  signalFeedback.classList.remove("is-success", "is-error");
+
+  if (category === card.category) {
+    signalSortState.correct += 1;
+    signalSortState.streak += 1;
+    signalSortState.score += 100 + ((signalSortState.streak - 1) * 20);
+    signalFeedback.classList.add("is-success");
+    signalFeedbackTitle.textContent = `Correct: ${card.category}`;
+  } else {
+    signalSortState.streak = 0;
+    signalSortState.score = Math.max(0, signalSortState.score - 20);
+    signalFeedback.classList.add("is-error");
+    signalFeedbackTitle.textContent = `Best fit: ${card.category}`;
+  }
+
+  signalFeedbackText.textContent = card.feedback;
+  signalNext.disabled = false;
+  updateSignalLaneButtons(category, card.category);
+  signalScore.textContent = String(signalSortState.score);
+  signalCorrect.textContent = String(signalSortState.correct);
+  signalStreak.textContent = String(signalSortState.streak);
+}
+
+function goToNextSignalCard() {
+  if (!signalSortState.answered || signalSortState.finished) return;
+
+  signalSortState.currentIndex += 1;
+  signalSortState.answered = false;
+
+  if (signalSortState.currentIndex >= signalSortState.deck.length) {
+    signalSortState.finished = true;
+  }
+
+  renderSignalSort();
+}
+
+function resetSignalSort() {
+  signalSortState.deck = shuffle(signalSortCards);
+  signalSortState.currentIndex = 0;
+  signalSortState.score = 0;
+  signalSortState.correct = 0;
+  signalSortState.streak = 0;
+  signalSortState.answered = false;
+  signalSortState.finished = false;
+  renderSignalSort();
 }
 
 function updateTechHud() {
@@ -921,6 +1079,23 @@ techControlButtons.forEach((button) => {
   });
 });
 
+signalLaneButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    submitSignalChoice(button.dataset.signalCategory);
+    button.blur();
+  });
+});
+
+signalNext.addEventListener("click", () => {
+  goToNextSignalCard();
+  signalNext.blur();
+});
+
+signalRestart.addEventListener("click", () => {
+  resetSignalSort();
+  signalRestart.blur();
+});
+
 window.addEventListener("keydown", (event) => {
   const activeTag = document.activeElement?.tagName;
   if (activeTag === "BUTTON" || activeTag === "A") {
@@ -937,6 +1112,28 @@ window.addEventListener("keydown", (event) => {
 
     event.preventDefault();
     moveWalkerByStep(direction[0], direction[1]);
+    return;
+  }
+
+  if (currentView === "signal-sort") {
+    const signalKeyMap = {
+      1: "Firmographic Fit",
+      2: "Technographic Fit",
+      3: "Hiring Signal",
+      4: "Risk",
+      5: "Growth Signal",
+      Enter: "next",
+    };
+
+    const signalAction = signalKeyMap[key];
+    if (!signalAction) return;
+
+    event.preventDefault();
+    if (signalAction === "next") {
+      goToNextSignalCard();
+    } else {
+      submitSignalChoice(signalAction);
+    }
     return;
   }
 
@@ -973,6 +1170,7 @@ window.addEventListener("resize", () => {
 setWalkerCell(walkerCell.col, walkerCell.row);
 syncActiveApproach();
 resetTechGame();
+resetSignalSort();
 setView("resume-city");
 techLastTimestamp = null;
 techAnimationFrame = window.requestAnimationFrame(stepTechGame);
