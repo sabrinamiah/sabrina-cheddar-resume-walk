@@ -102,6 +102,371 @@ const signalSortCards = [
   { card: "A company expands into a new market", category: "Growth Signal", feedback: "New market entry usually creates fresh GTM needs and growth opportunities." },
 ];
 
+const cleanupRecords = [
+  {
+    objectType: "Account",
+    fileName: "acct_acme_inc.csv",
+    title: "Acme Incorporated",
+    fields: [
+      ["Account Name", "Acme Incorporated"],
+      ["Website", "acme.com"],
+      ["CRM Match", "ACME, Inc."],
+      ["Employees", "250 / 410 / blank"],
+      ["Country", "U.S. / United States"],
+      ["Issue Flag", "Possible duplicate plus incomplete data", true],
+    ],
+    action: "Merge Records",
+    feedback: "The website and company name point to the same account already living in the CRM. Merge first so you do not create a duplicate before cleanup and enrichment.",
+  },
+  {
+    objectType: "Account",
+    fileName: "lead_northwind_import.csv",
+    title: "Northwind Labs",
+    fields: [
+      ["Account Name", "Northwind Labs"],
+      ["Country", "USA / United States / US"],
+      ["State", "ga / Georgia"],
+      ["Industry", "health care / Healthcare"],
+      ["Owner", "Jordan"],
+      ["Issue Flag", "Formatting conflicts across mapped fields", true],
+    ],
+    action: "Standardize Fields",
+    feedback: "The record is usable, but the values are inconsistent. Standardizing formatting and picklist values is the safest next step.",
+  },
+  {
+    objectType: "Account",
+    fileName: "prospect_zenith_bio.csv",
+    title: "Zenith Bio",
+    fields: [
+      ["Account Name", "Zenith Bio"],
+      ["Website", "blank"],
+      ["Employees", "blank"],
+      ["LinkedIn", "Present"],
+      ["HQ Country", "blank"],
+      ["Issue Flag", "Core firmographic data missing", true],
+    ],
+    action: "Enrich First",
+    feedback: "This one is missing the core fields you need to route, segment, and score it correctly. Enrich it before anyone acts on it.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_polaris_group.csv",
+    title: "Polaris Group",
+    fields: [
+      ["Account Name", "Polaris Group"],
+      ["Website", "polarisgroup.com"],
+      ["Existing CRM Match", "Polaris Holdings"],
+      ["Employees", "1,100 / 75"],
+      ["Parent Account", "blank"],
+      ["Issue Flag", "Conflicting signals suggest possible parent-child relationship", true],
+    ],
+    action: "Needs Review",
+    feedback: "There is probably a relationship here, but the size mismatch and missing parent info make it risky to automate. Route it for human review.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_freegiftcards_now.csv",
+    title: "Promo Contact",
+    fields: [
+      ["Full Name", "Unknown"],
+      ["Work Email", "promo@freegiftcardsnow.biz"],
+      ["Account Name", "FreeGiftCardsNow.biz"],
+      ["Email Domain", "freegiftcardsnow.biz"],
+      ["Phone", "000-000-0000"],
+      ["Job Title", "blank"],
+      ["Issue Flag", "Likely spam or junk source", true],
+    ],
+    action: "Reject Record",
+    feedback: "This looks like junk data, not a viable GTM record. Rejecting it protects the CRM and the sales team from noise.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "contact_maple_peak.csv",
+    title: "Ana Martinez",
+    fields: [
+      ["Full Name", "Ana Martinez"],
+      ["Work Email", "ana@maplepeak.io"],
+      ["Account Name", "Maple Peak"],
+      ["Account Website", "maplepeak.io"],
+      ["CRM Contact", "Ana Martinez"],
+      ["Issue Flag", "Net-new contact tied to an existing account", true],
+    ],
+    action: "Merge Records",
+    feedback: "The account already exists and the incoming file points to a likely duplicate or partial net-new contact. Merge against the existing record path first.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_blue_harbor.csv",
+    title: "Blue Harbor Systems",
+    fields: [
+      ["Account Name", "Blue Harbor Systems"],
+      ["Revenue", "$80M"],
+      ["Employee Range", "500-1000"],
+      ["Tech Stack", "Salesforce"],
+      ["Job Title", "vp revenue operations"],
+      ["Issue Flag", "Title casing and mapped values need cleanup", true],
+    ],
+    action: "Standardize Fields",
+    feedback: "The record has good signal, but its formatting is messy. Standardize the fields so downstream routing and reporting stay consistent.",
+  },
+  {
+    objectType: "Account",
+    fileName: "prospect_summitgrid.csv",
+    title: "SummitGrid",
+    fields: [
+      ["Account Name", "SummitGrid"],
+      ["Website", "summitgrid.ai"],
+      ["Employees", "blank"],
+      ["Funding", "blank"],
+      ["LinkedIn", "Present"],
+      ["Issue Flag", "Promising account with missing enrichment coverage", true],
+    ],
+    action: "Enrich First",
+    feedback: "The account might be a fit, but you still need core data before it can be scored or routed confidently. Enrich it first.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_harvest_bridge.csv",
+    title: "Harvest Bridge",
+    fields: [
+      ["Account Name", "Harvest Bridge"],
+      ["Website", "harvestbridge.com"],
+      ["CRM Match", "Harvest Bridge Europe"],
+      ["Region", "North America"],
+      ["Owner", "blank"],
+      ["Issue Flag", "Possible regional child account but ownership unclear", true],
+    ],
+    action: "Needs Review",
+    feedback: "It may be a valid regional account, but the account structure is ambiguous. This is safer as a review queue item than an automated action.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_lumina_cloud.csv",
+    title: "Lumina Cloud",
+    fields: [
+      ["Account Name", "Lumina Cloud"],
+      ["Website", "luminacloud.com"],
+      ["Employees", "420"],
+      ["Country", "United States"],
+      ["CRM Match", "none found"],
+      ["Issue Flag", "Complete, net-new account with clean required fields", true],
+    ],
+    action: "Create New Record",
+    feedback: "This is the kind of file you want to let through. It is complete, clean, and not already represented in the CRM, so creating a new record is the right move.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_sable_works.csv",
+    title: "Mina Patel",
+    fields: [
+      ["Full Name", "Mina Patel"],
+      ["Work Email", "mina@sableworks.io"],
+      ["Account Name", "Sable Works"],
+      ["Account Website", "sableworks.io"],
+      ["CRM Match", "none found"],
+      ["Issue Flag", "Verified net-new lead with all required routing fields", true],
+    ],
+    action: "Create New Record",
+    feedback: "Nothing here suggests a duplicate, junk entry, or cleanup hold. The file is ready to become a new CRM record.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_orbit_bio.csv",
+    title: "Orbit Bio",
+    fields: [
+      ["Account Name", "Orbit Bio"],
+      ["Website", "orbitbio.com"],
+      ["CRM Match", "Orbit Bio, LLC"],
+      ["Employees", "130 / 128"],
+      ["Country", "United States"],
+      ["Issue Flag", "High-confidence duplicate account with minor field drift", true],
+    ],
+    action: "Merge Records",
+    feedback: "The existing CRM match and near-identical core fields make this a classic merge case. Folding it into the current record prevents duplicate account sprawl.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "contact_nova_path.csv",
+    title: "Robert Hale",
+    fields: [
+      ["Full Name", "Robert Hale"],
+      ["Work Email", "rob@novapath.ai"],
+      ["Account Name", "Nova Path"],
+      ["Account Domain", "novapath.ai"],
+      ["Existing Contact", "Robert Hale"],
+      ["Issue Flag", "Incoming contact likely matches an existing person record", true],
+    ],
+    action: "Merge Records",
+    feedback: "The domain and contact clues strongly suggest this person is already in the system. Merge instead of creating a fragmented contact history.",
+  },
+  {
+    objectType: "Account",
+    fileName: "lead_mapleforge_import.csv",
+    title: "MapleForge",
+    fields: [
+      ["Account Name", "MapleForge"],
+      ["Country", "U.K. / United Kingdom / UK"],
+      ["State", "n/a"],
+      ["Employee Band", "201-500 / 200-500"],
+      ["Source Detail", "webinar / Webinar"],
+      ["Issue Flag", "Standard picklists and labels are inconsistent", true],
+    ],
+    action: "Standardize Fields",
+    feedback: "The data is useful, but the mapped values are inconsistent enough to create reporting noise. Standardize first so the record lands cleanly.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_redwood_peak.csv",
+    title: "Redwood Peak",
+    fields: [
+      ["Account Name", "Redwood Peak"],
+      ["Industry", "software / Software"],
+      ["Segment", "mid market / Mid-Market"],
+      ["Owner", "kelly tran"],
+      ["Lifecycle Stage", "mql / MQL"],
+      ["Issue Flag", "Formatting cleanup needed across controlled fields", true],
+    ],
+    action: "Standardize Fields",
+    feedback: "This file is structurally fine, but its labels and casing are inconsistent. Standardization keeps routing and dashboards from splitting the same values.",
+  },
+  {
+    objectType: "Account",
+    fileName: "prospect_everfield.csv",
+    title: "Everfield",
+    fields: [
+      ["Account Name", "Everfield"],
+      ["Website", "everfield.io"],
+      ["Employees", "blank"],
+      ["Industry", "blank"],
+      ["LinkedIn", "Present"],
+      ["Issue Flag", "Too little firmographic data to route safely", true],
+    ],
+    action: "Enrich First",
+    feedback: "The record has promise, but it is still missing the basics needed for segmentation and assignment. Enrichment should happen before it reaches reps.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_aurora_mesh.csv",
+    title: "Jordan Lee",
+    fields: [
+      ["Full Name", "Jordan Lee"],
+      ["Work Email", "jordan@auroramesh.com"],
+      ["Account Name", "Aurora Mesh"],
+      ["Account Website", "blank"],
+      ["HQ Country", "blank"],
+      ["Issue Flag", "Person data present but account context is incomplete", true],
+    ],
+    action: "Enrich First",
+    feedback: "You have a real person, but not enough company context to route the lead properly. Enrich the account details before creating downstream tasks.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_willow_ridge.csv",
+    title: "Willow Ridge",
+    fields: [
+      ["Account Name", "Willow Ridge"],
+      ["Website", "willowridge.co"],
+      ["CRM Match", "Willow Ridge Ventures"],
+      ["Employees", "45 / 410"],
+      ["Parent Account", "blank"],
+      ["Issue Flag", "Possible subsidiary or naming collision needs human judgment", true],
+    ],
+    action: "Needs Review",
+    feedback: "There is enough overlap to be risky, but not enough certainty to automate. A human should decide whether this is a new entity, child account, or duplicate.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_harborthread.csv",
+    title: "Avery Brooks",
+    fields: [
+      ["Full Name", "Avery Brooks"],
+      ["Work Email", "avery@harborthread.com"],
+      ["Account Name", "Harbor Thread Logistics"],
+      ["Country", "Canada"],
+      ["Business Unit", "blank"],
+      ["Issue Flag", "May belong under an existing account family", true],
+    ],
+    action: "Needs Review",
+    feedback: "This could be a valid new record or just another branch of an existing customer. Review is safer than forcing an automated choice.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_glassriver.csv",
+    title: "Glass River",
+    fields: [
+      ["Account Name", "Glass River"],
+      ["Website", "glassriver.io"],
+      ["Employees", "310"],
+      ["Country", "United States"],
+      ["CRM Match", "none found"],
+      ["Issue Flag", "Complete net-new account with clean segmentation fields", true],
+    ],
+    action: "Create New Record",
+    feedback: "The account is complete, looks valid, and does not collide with existing CRM data. This is exactly the kind of record you can create confidently.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_trueharbor.csv",
+    title: "Leah Gomez",
+    fields: [
+      ["Full Name", "Leah Gomez"],
+      ["Work Email", "leah@trueharbor.com"],
+      ["Account Name", "TrueHarbor"],
+      ["Account Website", "trueharbor.com"],
+      ["Lifecycle Stage", "New Inquiry"],
+      ["Issue Flag", "Verified new lead with complete routing fields", true],
+    ],
+    action: "Create New Record",
+    feedback: "This is clean, complete, and not already represented in the CRM. Creating a new record keeps the funnel moving without unnecessary delay.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_cryptofast247.csv",
+    title: "Promo Contact",
+    fields: [
+      ["Full Name", "Unknown"],
+      ["Work Email", "promo@cryptofast247.biz"],
+      ["Account Name", "CryptoFast247"],
+      ["Phone", "111-111-1111"],
+      ["Account Website", "cryptofast247.biz"],
+      ["Lead Source", "Purchased list"],
+      ["Issue Flag", "Low-quality spam-like record with no trustworthy intent", true],
+    ],
+    action: "Reject Record",
+    feedback: "This entry looks spammy and low trust, not like a serious buyer. Rejecting it prevents bad data from contaminating the CRM.",
+  },
+  {
+    objectType: "Account",
+    fileName: "acct_placeholder_global.csv",
+    title: "Placeholder Global",
+    fields: [
+      ["Account Name", "Placeholder Global"],
+      ["Website", "tbd"],
+      ["Employees", "999999"],
+      ["Country", "Unknown"],
+      ["Owner", "blank"],
+      ["Issue Flag", "Obvious placeholder and test-style values", true],
+    ],
+    action: "Reject Record",
+    feedback: "This is not production-quality data. It reads like a fake or placeholder record and should be blocked before it reaches the database.",
+  },
+  {
+    objectType: "Contact",
+    fileName: "lead_test123.csv",
+    title: "Test Contact",
+    fields: [
+      ["Full Name", "Test Contact"],
+      ["Work Email", "test@test.com"],
+      ["Account Name", "asdf"],
+      ["Phone", "1234567890"],
+      ["Source", "Unknown list upload"],
+      ["Issue Flag", "Low-quality placeholder data", true],
+    ],
+    action: "Reject Record",
+    feedback: "This is placeholder-quality data with no trustworthy buying signal. Reject it instead of poisoning the database.",
+  },
+];
+
 const techShapeTemplates = [
   { name: "I", color: "#48d0ff", matrix: [[1, 1, 1, 1]] },
   { name: "O", color: "#ffd95f", matrix: [[1, 1], [1, 1]] },
@@ -161,6 +526,20 @@ const signalFeedbackText = document.getElementById("signal-feedback-text");
 const signalLaneButtons = Array.from(document.querySelectorAll("[data-signal-category]"));
 const signalNext = document.getElementById("signal-next");
 const signalRestart = document.getElementById("signal-restart");
+const cleanupScore = document.getElementById("cleanup-score");
+const cleanupFixed = document.getElementById("cleanup-fixed");
+const cleanupStreak = document.getElementById("cleanup-streak");
+const cleanupProgress = document.getElementById("cleanup-progress");
+const cleanupFile = document.getElementById("cleanup-file");
+const cleanupObjectBadge = document.getElementById("cleanup-object-badge");
+const cleanupRecordTitle = document.getElementById("cleanup-record-title");
+const cleanupRecordGrid = document.getElementById("cleanup-record-grid");
+const cleanupFeedback = document.getElementById("cleanup-feedback");
+const cleanupFeedbackTitle = document.getElementById("cleanup-feedback-title");
+const cleanupFeedbackText = document.getElementById("cleanup-feedback-text");
+const cleanupActionButtons = Array.from(document.querySelectorAll("[data-cleanup-action]"));
+const cleanupNext = document.getElementById("cleanup-next");
+const cleanupRestart = document.getElementById("cleanup-restart");
 
 const approachCellsById = new Map();
 const approachCellToIds = new Map();
@@ -211,8 +590,20 @@ const signalSortState = {
   finished: false,
 };
 
+const cleanupState = {
+  deck: [],
+  currentIndex: 0,
+  score: 0,
+  fixed: 0,
+  streak: 0,
+  bestStreak: 0,
+  answered: false,
+  finished: false,
+};
+
 let techShapeBag = [];
 let techLabelBag = [];
+let cleanupDragState = null;
 
 for (let col = 1; col <= GRID_COLS; col += 1) {
   for (let row = 1; row <= GRID_ROWS; row += 1) {
@@ -568,6 +959,10 @@ function moveWalkerByStep(dx, dy) {
 }
 
 function setView(viewName) {
+  if (viewName !== "data-cleanup") {
+    resetCleanupFilePosition();
+  }
+
   currentView = viewName;
 
   viewButtons.forEach((button) => {
@@ -593,6 +988,8 @@ function setView(viewName) {
 
     if (viewName === "signal-sort") {
       renderSignalSort();
+    } else if (viewName === "data-cleanup") {
+      renderCleanupGame();
     }
   }
 }
@@ -705,6 +1102,193 @@ function resetSignalSort() {
   signalSortState.answered = false;
   signalSortState.finished = false;
   renderSignalSort();
+}
+
+function getCurrentCleanupRecord() {
+  return cleanupState.deck[cleanupState.currentIndex] || null;
+}
+
+function getCleanupObjectIdValue(record) {
+  if (record.action === "Create New Record") {
+    return "Missing";
+  }
+
+  let seed = 0;
+  const source = `${record.fileName}:${record.title}:${record.objectType}`;
+  for (const character of source) {
+    seed = (seed * 31) + character.charCodeAt(0);
+  }
+
+  const base36 = Math.abs(seed).toString(36).toUpperCase();
+  const suffix = base36.padStart(12, "0").slice(-12);
+  return `${record.objectType === "Contact" ? "003" : "001"}${suffix}`;
+}
+
+function createCleanupRow(label, value, flagged = false) {
+  const row = document.createElement("div");
+  row.className = `cleanup-record-row${flagged ? " cleanup-record-row-flag" : ""}`;
+  if (value === "Missing") {
+    row.classList.add("cleanup-record-row-missing");
+  }
+
+  const labelNode = document.createElement("span");
+  labelNode.className = "cleanup-record-label";
+  labelNode.textContent = flagged ? "Alert:" : label;
+
+  const valueNode = document.createElement("span");
+  valueNode.className = "cleanup-record-value";
+  valueNode.textContent = value;
+
+  row.append(labelNode, valueNode);
+  return row;
+}
+
+function renderCleanupRecord(record) {
+  cleanupObjectBadge.textContent = record.objectType;
+  cleanupObjectBadge.classList.toggle("is-contact", record.objectType === "Contact");
+  cleanupObjectBadge.classList.toggle("is-account", record.objectType !== "Contact");
+  cleanupRecordTitle.textContent = record.title;
+  const idLabel = `${record.objectType} ID`;
+  const idRow = createCleanupRow(idLabel, getCleanupObjectIdValue(record));
+  cleanupRecordGrid.replaceChildren(
+    idRow,
+    ...record.fields.map(([label, value, flagged]) => createCleanupRow(label, value, flagged)),
+  );
+}
+
+function renderCleanupSummary() {
+  cleanupObjectBadge.textContent = "Queue";
+  cleanupObjectBadge.classList.remove("is-contact");
+  cleanupObjectBadge.classList.add("is-account");
+  cleanupRecordTitle.textContent = "Queue cleared";
+  cleanupRecordGrid.replaceChildren(
+    createCleanupRow("Files Fixed", String(cleanupState.fixed)),
+    createCleanupRow("Final Score", String(cleanupState.score)),
+    createCleanupRow("Best Streak", `${cleanupState.bestStreak} in a row`),
+  );
+}
+
+function updateCleanupActionButtons(selectedAction = null, correctAction = null) {
+  cleanupActionButtons.forEach((button) => {
+    const action = button.dataset.cleanupAction;
+    button.classList.remove("is-drop-target", "is-correct", "is-wrong", "is-locked");
+
+    if (cleanupState.answered || cleanupState.finished) {
+      button.classList.add("is-locked");
+    }
+
+    if (!cleanupState.answered) return;
+
+    if (action === correctAction) {
+      button.classList.add("is-correct");
+    } else if (action === selectedAction) {
+      button.classList.add("is-wrong");
+    }
+  });
+}
+
+function renderCleanupGame() {
+  cleanupScore.textContent = String(cleanupState.score);
+  cleanupFixed.textContent = String(cleanupState.fixed);
+  cleanupStreak.textContent = String(cleanupState.streak);
+  cleanupNext.disabled = !cleanupState.answered || cleanupState.finished;
+  cleanupFile.classList.toggle("is-locked", cleanupState.answered || cleanupState.finished);
+  cleanupFile.setAttribute("aria-disabled", String(cleanupState.answered || cleanupState.finished));
+
+  if (cleanupState.finished) {
+    cleanupProgress.textContent = `Queue complete: ${cleanupState.fixed} of ${cleanupState.deck.length} files fixed`;
+    renderCleanupSummary();
+    cleanupFeedback.classList.remove("is-success", "is-error");
+    cleanupFeedbackTitle.textContent = "Queue complete.";
+    cleanupFeedbackText.textContent = `Final score: ${cleanupState.score}. You routed ${cleanupState.fixed} of ${cleanupState.deck.length} files correctly.`;
+    updateCleanupActionButtons();
+    return;
+  }
+
+  const record = getCurrentCleanupRecord();
+  if (!record) return;
+
+  cleanupProgress.textContent = `File ${cleanupState.currentIndex + 1} of ${cleanupState.deck.length}`;
+  renderCleanupRecord(record);
+
+  if (!cleanupState.answered) {
+    cleanupFeedback.classList.remove("is-success", "is-error");
+    cleanupFeedbackTitle.textContent = "Select the strongest cleanup folder.";
+    cleanupFeedbackText.textContent = "Read the issue flag, object type, and ID status, then choose the safest cleanup action.";
+    updateCleanupActionButtons();
+  }
+}
+
+function submitCleanupChoice(action) {
+  if (currentView !== "data-cleanup" || cleanupState.answered || cleanupState.finished) return;
+
+  const record = getCurrentCleanupRecord();
+  if (!record) return;
+
+  cleanupState.answered = true;
+  cleanupFeedback.classList.remove("is-success", "is-error");
+
+  if (action === record.action) {
+    cleanupState.fixed += 1;
+    cleanupState.streak += 1;
+    cleanupState.bestStreak = Math.max(cleanupState.bestStreak, cleanupState.streak);
+    cleanupState.score += 120 + ((cleanupState.streak - 1) * 25);
+    cleanupFeedback.classList.add("is-success");
+    cleanupFeedbackTitle.textContent = `Correct: ${record.action}`;
+  } else {
+    cleanupState.streak = 0;
+    cleanupState.score = Math.max(0, cleanupState.score - 30);
+    cleanupFeedback.classList.add("is-error");
+    cleanupFeedbackTitle.textContent = `Best lane: ${record.action}`;
+  }
+
+  cleanupFeedbackText.textContent = record.feedback;
+  cleanupNext.disabled = false;
+  cleanupScore.textContent = String(cleanupState.score);
+  cleanupFixed.textContent = String(cleanupState.fixed);
+  cleanupStreak.textContent = String(cleanupState.streak);
+  cleanupFile.classList.add("is-locked");
+  updateCleanupActionButtons(action, record.action);
+}
+
+function goToNextCleanupRecord() {
+  if (!cleanupState.answered || cleanupState.finished) return;
+
+  cleanupState.currentIndex += 1;
+  cleanupState.answered = false;
+  resetCleanupFilePosition();
+
+  if (cleanupState.currentIndex >= cleanupState.deck.length) {
+    cleanupState.finished = true;
+  }
+
+  renderCleanupGame();
+}
+
+function resetCleanupGame() {
+  cleanupState.deck = shuffle(cleanupRecords);
+  cleanupState.currentIndex = 0;
+  cleanupState.score = 0;
+  cleanupState.fixed = 0;
+  cleanupState.streak = 0;
+  cleanupState.bestStreak = 0;
+  cleanupState.answered = false;
+  cleanupState.finished = false;
+  resetCleanupFilePosition();
+  renderCleanupGame();
+}
+
+function getCleanupDropTargetFromPoint(clientX, clientY) {
+  return document.elementFromPoint(clientX, clientY)?.closest("[data-cleanup-action]") || null;
+}
+
+function clearCleanupDropTarget() {
+  cleanupActionButtons.forEach((button) => button.classList.remove("is-drop-target"));
+}
+
+function resetCleanupFilePosition() {
+  clearCleanupDropTarget();
+  cleanupDragState = null;
 }
 
 function updateTechHud() {
@@ -1127,6 +1711,23 @@ signalRestart.addEventListener("click", () => {
   signalRestart.blur();
 });
 
+cleanupActionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    submitCleanupChoice(button.dataset.cleanupAction);
+    button.blur();
+  });
+});
+
+cleanupNext.addEventListener("click", () => {
+  goToNextCleanupRecord();
+  cleanupNext.blur();
+});
+
+cleanupRestart.addEventListener("click", () => {
+  resetCleanupGame();
+  cleanupRestart.blur();
+});
+
 window.addEventListener("keydown", (event) => {
   const activeTag = document.activeElement?.tagName;
   if (activeTag === "BUTTON" || activeTag === "A") {
@@ -1169,6 +1770,29 @@ window.addEventListener("keydown", (event) => {
     return;
   }
 
+  if (currentView === "data-cleanup") {
+    const cleanupKeyMap = {
+      1: "Merge Records",
+      2: "Standardize Fields",
+      3: "Enrich First",
+      4: "Needs Review",
+      5: "Create New Record",
+      6: "Reject Record",
+      Enter: "next",
+    };
+
+    const cleanupAction = cleanupKeyMap[key];
+    if (!cleanupAction) return;
+
+    event.preventDefault();
+    if (cleanupAction === "next") {
+      goToNextCleanupRecord();
+    } else {
+      submitCleanupChoice(cleanupAction);
+    }
+    return;
+  }
+
   if (currentView !== "tech-stack") return;
 
   if (key === "ArrowLeft") {
@@ -1203,6 +1827,7 @@ setWalkerCell(walkerCell.col, walkerCell.row);
 syncActiveApproach();
 resetTechGame();
 resetSignalSort();
+resetCleanupGame();
 setView("resume-city");
 techLastTimestamp = null;
 techAnimationFrame = window.requestAnimationFrame(stepTechGame);
