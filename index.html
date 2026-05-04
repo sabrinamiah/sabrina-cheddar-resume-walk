@@ -13,60 +13,129 @@
     <main class="page">
       <header class="hud">
         <h1>Sabrina Carver</h1>
-        <p>Welcome to my interactive resume! Guide Cheddar with arrow keys or WASD, or click on the building you would like to visit.</p>
+        <p>Welcome to my interactive resume. Explore Resume City, then switch into Tech Stack for a mini-game built right inside the same experience.</p>
         <div class="hud-actions" aria-label="Portfolio actions">
+          <button class="hud-link hud-button is-active" type="button" data-view-target="resume-city">Resume City</button>
+          <button class="hud-link hud-button" type="button" data-view-target="tech-stack">Tech Stack</button>
           <a class="hud-link" href="https://www.linkedin.com/in/sabrina-carver-28928624b/" target="_blank" rel="noreferrer">LinkedIn</a>
         </div>
       </header>
 
       <section class="map-shell">
-        <div class="map-viewport">
-          <div id="map" class="map" aria-label="Interactive pixel city map">
-            <div class="road-network" aria-hidden="true"></div>
-            <div class="city-grid">
-            <button class="building" data-id="police" data-approach="4,2|2,4|6,4|4,6" style="--col: 3; --row: 3; --w: 3; --h: 3; --art: url('assets/Police.png');"><span class="building-label">Police Station</span></button>
-            <button class="building" data-id="courthouse" data-approach="9,2|7,4|11,4|9,6" style="--col: 8; --row: 3; --w: 3; --h: 3; --art: url('assets/Courthouse.png');"><span class="building-label">Courthouse</span></button>
-            <button class="building" data-id="recycle" data-approach="14,2|12,4|16,4|14,6" style="--col: 13; --row: 3; --w: 3; --h: 3; --art: url('assets/Recycling-Center.png');"><span class="building-label">Recycling &amp; Waste</span></button>
-            <button class="building" data-id="post" data-approach="19,2|17,4|21,4|19,6" style="--col: 18; --row: 3; --w: 3; --h: 3; --art: url('assets/Post-Office.png?v=2');"><span class="building-label">Post Office</span></button>
-            <button class="building" data-id="gym" data-approach="24,2|22,4|26,4|24,6" style="--col: 23; --row: 3; --w: 3; --h: 3; --art: url('assets/Gym.png');"><span class="building-label">Gym</span></button>
-
-            <button class="building" data-id="fire" data-approach="4,7|2,9|6,9|4,11" style="--col: 3; --row: 8; --w: 3; --h: 3; --art: url('assets/Fire-Station.png?v=2');"><span class="building-label">Fire Station</span></button>
-            <button class="building" data-id="library" data-approach="9,7|7,9|11,9|9,11" style="--col: 8; --row: 8; --w: 3; --h: 3; --art: url('assets/Library.png?v=2');"><span class="building-label">Library</span></button>
-            <button class="building" data-id="school" data-approach="14,7|12,9|16,9|14,11" style="--col: 13; --row: 8; --w: 3; --h: 3; --art: url('assets/School.png');"><span class="building-label">School</span></button>
-            <button class="building" data-id="cityhall" data-approach="19,7|17,9|21,9|19,11" style="--col: 18; --row: 8; --w: 3; --h: 3; --art: url('assets/City-Hall.png');"><span class="building-label">City Hall</span></button>
-            <button class="building" data-id="shop" data-approach="24,7|22,9|26,9|24,11" style="--col: 23; --row: 8; --w: 3; --h: 3; --art: url('assets/Shop.png');"><span class="building-label">Shop</span></button>
-
-            <button class="building" data-id="university" data-approach="4,12|2,14|6,14|4,16" style="--col: 3; --row: 13; --w: 3; --h: 3; --art: url('assets/University.png?v=2');"><span class="building-label">University</span></button>
-            <button class="building" data-id="hospital" data-approach="9,12|7,14|11,14|9,16" style="--col: 8; --row: 13; --w: 3; --h: 3; --art: url('assets/Hospital.png?v=3');"><span class="building-label">Hospital</span></button>
-            <button class="building building-park" data-id="park" data-approach="15,12|18,12|12,14|21,14|15,16|18,16" style="--col: 13; --row: 13; --w: 8; --h: 3; --art: url('assets/Park.png?v=3');"><span class="building-label">Park</span></button>
-            <button class="building" data-id="museum" data-approach="24,12|22,14|26,14|24,16" style="--col: 23; --row: 13; --w: 3; --h: 3; --art: url('assets/Museum.png?v=2');"><span class="building-label">Museum</span></button>
-
-            <button class="building" data-id="bank" data-approach="4,17|2,19|6,19|4,21" style="--col: 3; --row: 18; --w: 3; --h: 3; --art: url('assets/Bank.png');"><span class="building-label">Bank</span></button>
-            <button class="building" data-id="office" data-approach="9,17|7,19|11,19|9,21" style="--col: 8; --row: 18; --w: 3; --h: 3; --art: url('assets/Office.png?v=2');"><span class="building-label">Office</span></button>
-            <button class="building" data-id="bakery" data-approach="14,17|12,19|16,19|14,21" style="--col: 13; --row: 18; --w: 3; --h: 3; --art: url('assets/Bakery.png');"><span class="building-label">Bakery</span></button>
-            <button class="building" data-id="airport" data-approach="19,17|17,19|21,19|19,21" style="--col: 18; --row: 18; --w: 3; --h: 3; --art: url('assets/Airport.png?v=2');"><span class="building-label">Airport</span></button>
-            <button class="building" data-id="home" data-approach="24,17|22,19|26,19|24,21" style="--col: 23; --row: 18; --w: 3; --h: 3; --art: url('assets/Home.png?v=2');"><span class="building-label">Home</span></button>
-            </div>
-
-            <aside id="building-popup" class="building-popup" aria-live="polite" aria-hidden="true" hidden>
-              <button id="popup-close" class="building-popup-close" type="button" aria-label="Close building popup">X</button>
-              <h2 id="popup-title">Cat Walk</h2>
-              <p id="popup-text">Click on or walk Cheddar over to the building you would like to visit.</p>
-            </aside>
-
-            <div id="walker" class="walker" aria-hidden="true"></div>
+        <div class="view-panel resume-city-view is-active" data-view-panel="resume-city">
+          <div class="view-heading">
+            <p class="view-kicker">Interactive Map</p>
+            <h2>Resume City</h2>
+            <p class="view-description">Guide Cheddar with arrow keys or WASD, or click a building to walk there and open its popup.</p>
           </div>
+
+          <div class="map-viewport">
+            <div id="map" class="map" aria-label="Interactive pixel city map">
+              <div class="road-network" aria-hidden="true"></div>
+              <div class="city-grid">
+              <button class="building" data-id="police" data-approach="4,2|2,4|6,4|4,6" style="--col: 3; --row: 3; --w: 3; --h: 3; --art: url('assets/Police.png');"><span class="building-label">Police Station</span></button>
+              <button class="building" data-id="courthouse" data-approach="9,2|7,4|11,4|9,6" style="--col: 8; --row: 3; --w: 3; --h: 3; --art: url('assets/Courthouse.png');"><span class="building-label">Courthouse</span></button>
+              <button class="building" data-id="recycle" data-approach="14,2|12,4|16,4|14,6" style="--col: 13; --row: 3; --w: 3; --h: 3; --art: url('assets/Recycling-Center.png');"><span class="building-label">Recycling &amp; Waste</span></button>
+              <button class="building" data-id="post" data-approach="19,2|17,4|21,4|19,6" style="--col: 18; --row: 3; --w: 3; --h: 3; --art: url('assets/Post-Office.png?v=2');"><span class="building-label">Post Office</span></button>
+              <button class="building" data-id="gym" data-approach="24,2|22,4|26,4|24,6" style="--col: 23; --row: 3; --w: 3; --h: 3; --art: url('assets/Gym.png');"><span class="building-label">Gym</span></button>
+
+              <button class="building" data-id="fire" data-approach="4,7|2,9|6,9|4,11" style="--col: 3; --row: 8; --w: 3; --h: 3; --art: url('assets/Fire-Station.png?v=2');"><span class="building-label">Fire Station</span></button>
+              <button class="building" data-id="library" data-approach="9,7|7,9|11,9|9,11" style="--col: 8; --row: 8; --w: 3; --h: 3; --art: url('assets/Library.png?v=2');"><span class="building-label">Library</span></button>
+              <button class="building" data-id="school" data-approach="14,7|12,9|16,9|14,11" style="--col: 13; --row: 8; --w: 3; --h: 3; --art: url('assets/School.png');"><span class="building-label">School</span></button>
+              <button class="building" data-id="cityhall" data-approach="19,7|17,9|21,9|19,11" style="--col: 18; --row: 8; --w: 3; --h: 3; --art: url('assets/City-Hall.png');"><span class="building-label">City Hall</span></button>
+              <button class="building" data-id="shop" data-approach="24,7|22,9|26,9|24,11" style="--col: 23; --row: 8; --w: 3; --h: 3; --art: url('assets/Shop.png');"><span class="building-label">Shop</span></button>
+
+              <button class="building" data-id="university" data-approach="4,12|2,14|6,14|4,16" style="--col: 3; --row: 13; --w: 3; --h: 3; --art: url('assets/University.png?v=2');"><span class="building-label">University</span></button>
+              <button class="building" data-id="hospital" data-approach="9,12|7,14|11,14|9,16" style="--col: 8; --row: 13; --w: 3; --h: 3; --art: url('assets/Hospital.png?v=3');"><span class="building-label">Hospital</span></button>
+              <button class="building building-park" data-id="park" data-approach="15,12|18,12|12,14|21,14|15,16|18,16" style="--col: 13; --row: 13; --w: 8; --h: 3; --art: url('assets/Park.png?v=3');"><span class="building-label">Park</span></button>
+              <button class="building" data-id="museum" data-approach="24,12|22,14|26,14|24,16" style="--col: 23; --row: 13; --w: 3; --h: 3; --art: url('assets/Museum.png?v=2');"><span class="building-label">Museum</span></button>
+
+              <button class="building" data-id="bank" data-approach="4,17|2,19|6,19|4,21" style="--col: 3; --row: 18; --w: 3; --h: 3; --art: url('assets/Bank.png');"><span class="building-label">Bank</span></button>
+              <button class="building" data-id="office" data-approach="9,17|7,19|11,19|9,21" style="--col: 8; --row: 18; --w: 3; --h: 3; --art: url('assets/Office.png?v=2');"><span class="building-label">Office</span></button>
+              <button class="building" data-id="bakery" data-approach="14,17|12,19|16,19|14,21" style="--col: 13; --row: 18; --w: 3; --h: 3; --art: url('assets/Bakery.png');"><span class="building-label">Bakery</span></button>
+              <button class="building" data-id="airport" data-approach="19,17|17,19|21,19|19,21" style="--col: 18; --row: 18; --w: 3; --h: 3; --art: url('assets/Airport.png?v=2');"><span class="building-label">Airport</span></button>
+              <button class="building" data-id="home" data-approach="24,17|22,19|26,19|24,21" style="--col: 23; --row: 18; --w: 3; --h: 3; --art: url('assets/Home.png?v=2');"><span class="building-label">Home</span></button>
+              </div>
+
+              <aside id="building-popup" class="building-popup" aria-live="polite" aria-hidden="true" hidden>
+                <button id="popup-close" class="building-popup-close" type="button" aria-label="Close building popup">X</button>
+                <h2 id="popup-title">Cat Walk</h2>
+                <p id="popup-text">Click on or walk Cheddar over to the building you would like to visit.</p>
+              </aside>
+
+              <div id="walker" class="walker" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <nav class="mobile-controls" aria-label="Cheddar movement controls">
+            <button class="move-button move-button-up" type="button" data-move="0,-1" aria-label="Move Cheddar up">Up</button>
+            <button class="move-button move-button-left" type="button" data-move="-1,0" aria-label="Move Cheddar left">Left</button>
+            <button class="move-button move-button-right" type="button" data-move="1,0" aria-label="Move Cheddar right">Right</button>
+            <button class="move-button move-button-down" type="button" data-move="0,1" aria-label="Move Cheddar down">Down</button>
+          </nav>
         </div>
 
-        <nav class="mobile-controls" aria-label="Cheddar movement controls">
-          <button class="move-button move-button-up" type="button" data-move="0,-1" aria-label="Move Cheddar up">Up</button>
-          <button class="move-button move-button-left" type="button" data-move="-1,0" aria-label="Move Cheddar left">Left</button>
-          <button class="move-button move-button-right" type="button" data-move="1,0" aria-label="Move Cheddar right">Right</button>
-          <button class="move-button move-button-down" type="button" data-move="0,1" aria-label="Move Cheddar down">Down</button>
-        </nav>
+        <div class="view-panel tech-stack-view" data-view-panel="tech-stack" hidden>
+          <div class="view-heading">
+            <p class="view-kicker">Mini Game</p>
+            <h2>Tech Stack</h2>
+            <p class="view-description">Classic falling-block energy, but every piece carries one of the platforms and tools in my stack.</p>
+          </div>
+
+          <div class="tech-shell">
+            <div class="tech-layout">
+              <aside class="tech-sidebar">
+                <div class="tech-stat-grid">
+                  <div class="tech-stat-card">
+                    <span class="tech-stat-label">Score</span>
+                    <strong id="tech-score">0</strong>
+                  </div>
+                  <div class="tech-stat-card">
+                    <span class="tech-stat-label">Lines</span>
+                    <strong id="tech-lines">0</strong>
+                  </div>
+                  <div class="tech-stat-card">
+                    <span class="tech-stat-label">Level</span>
+                    <strong id="tech-level">1</strong>
+                  </div>
+                </div>
+
+                <div class="tech-info-card">
+                  <span class="tech-stat-label">Now Falling</span>
+                  <p id="tech-current-label" class="tech-label-readout">Salesforce</p>
+                </div>
+
+                <div class="tech-info-card">
+                  <span class="tech-stat-label">Next Up</span>
+                  <p id="tech-next-label" class="tech-label-readout">Clay</p>
+                </div>
+
+                <div class="tech-info-card">
+                  <span class="tech-stat-label">Controls</span>
+                  <p class="tech-controls-copy">Arrow keys move, `Up` rotates, `Space` hard-drops, and `P` pauses.</p>
+                </div>
+
+                <button id="tech-restart" class="hud-link hud-button tech-restart" type="button">Restart Run</button>
+                <p id="tech-status" class="tech-status">Stack clean rows to keep the board under control.</p>
+              </aside>
+
+              <div class="tech-board-frame">
+                <div id="tech-board" class="tech-board" aria-label="Tech Stack mini game board"></div>
+              </div>
+
+              <div class="tech-touch-controls" aria-label="Tech Stack touch controls">
+                <button class="tech-control-button" type="button" data-tech-action="left">Left</button>
+                <button class="tech-control-button" type="button" data-tech-action="rotate">Rotate</button>
+                <button class="tech-control-button" type="button" data-tech-action="right">Right</button>
+                <button class="tech-control-button" type="button" data-tech-action="down">Down</button>
+                <button class="tech-control-button tech-control-button-wide" type="button" data-tech-action="drop">Hard Drop</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
   </body>
 </html>
