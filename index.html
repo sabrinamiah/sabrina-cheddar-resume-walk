@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=9" />
+    <link rel="stylesheet" href="style.css?v=10" />
   </head>
   <body>
     <main class="page">
@@ -18,6 +18,7 @@
           <button class="hud-link hud-button is-active" type="button" data-view-target="resume-city">Resume City</button>
           <button class="hud-link hud-button" type="button" data-view-target="tech-stack">Tech Stack</button>
           <button class="hud-link hud-button" type="button" data-view-target="signal-sort">Signal Sort</button>
+          <button class="hud-link hud-button" type="button" data-view-target="data-cleanup">Data Cleanup</button>
           <a class="hud-link" href="https://www.linkedin.com/in/sabrina-carver-28928624b/" target="_blank" rel="noreferrer">LinkedIn</a>
         </div>
       </header>
@@ -137,7 +138,7 @@
 
         <div class="view-panel signal-sort-view" data-view-panel="signal-sort" hidden>
           <div class="view-heading">
-            <p class="view-kicker">Clay Signals</p>
+            <p class="view-kicker">Mini Game</p>
             <h2>Signal Sort</h2>
             <p class="view-description">Read each account signal and sort it into the best-fit Clay lane as fast and accurately as you can.</p>
           </div>
@@ -202,9 +203,112 @@
             </div>
           </div>
         </div>
+
+        <div class="view-panel data-cleanup-view" data-view-panel="data-cleanup" hidden>
+          <div class="view-heading">
+            <p class="view-kicker">Mini Game</p>
+            <h2>Data Cleanup Desk</h2>
+            <p class="view-description">Drag the incoming file into the best cleanup lane before it hits the CRM. Move fast, stay accurate, and protect the pipeline.</p>
+          </div>
+
+          <div class="cleanup-shell">
+            <aside class="cleanup-sidebar">
+              <div class="cleanup-stat-grid">
+                <div class="cleanup-stat-card">
+                  <span class="tech-stat-label">Score</span>
+                  <strong id="cleanup-score">0</strong>
+                </div>
+                <div class="cleanup-stat-card">
+                  <span class="tech-stat-label">Fixed</span>
+                  <strong id="cleanup-fixed">0</strong>
+                </div>
+                <div class="cleanup-stat-card">
+                  <span class="tech-stat-label">Streak</span>
+                  <strong id="cleanup-streak">0</strong>
+                </div>
+              </div>
+
+              <div class="cleanup-info-card">
+                <span class="tech-stat-label">Queue</span>
+                <p id="cleanup-progress" class="cleanup-copy">File 1 of 10</p>
+              </div>
+
+              <div class="cleanup-info-card">
+                <span class="tech-stat-label">How To Play</span>
+                <p class="cleanup-copy">Drag the file into the best lane: Merge Records, Standardize Fields, Enrich First, Needs Review, Create New Record, or Reject Record.</p>
+              </div>
+
+              <button id="cleanup-restart" class="hud-link hud-button cleanup-restart" type="button">Restart Queue</button>
+            </aside>
+
+            <div class="cleanup-main">
+              <section class="cleanup-panel cleanup-desk-panel">
+                <div class="cleanup-panel-header">
+                  <span class="tech-stat-label">Desk View</span>
+                </div>
+
+                <div class="cleanup-desk">
+                  <div class="cleanup-drop-stage">
+                    <div id="cleanup-file" class="cleanup-file" aria-describedby="cleanup-file-hint">
+                      <div class="cleanup-file-topline">
+                        <span class="cleanup-file-chip">Cheddar CRM</span>
+                        <span id="cleanup-object-badge" class="cleanup-object-badge is-account">Account</span>
+                      </div>
+                      <h3 id="cleanup-record-title" class="cleanup-record-title">Acme Incorporated</h3>
+                      <div id="cleanup-record-grid" class="cleanup-record-grid"></div>
+                    </div>
+                  </div>
+                  <p id="cleanup-file-hint" class="cleanup-drag-hint">Select the best folder to route this record.</p>
+
+                  <div class="cleanup-actions-grid cleanup-desk-folders" aria-label="Cleanup actions">
+                    <button class="cleanup-action-button" type="button" data-cleanup-action="Merge Records">
+                      <span class="cleanup-folder-tab">Folder</span>
+                      <span class="cleanup-action-title">Merge Records</span>
+                      <span class="cleanup-action-copy">Duplicate account or contact already exists.</span>
+                    </button>
+                    <button class="cleanup-action-button" type="button" data-cleanup-action="Standardize Fields">
+                      <span class="cleanup-folder-tab">Folder</span>
+                      <span class="cleanup-action-title">Standardize Fields</span>
+                      <span class="cleanup-action-copy">Normalize formatting, naming, and picklist values.</span>
+                    </button>
+                    <button class="cleanup-action-button" type="button" data-cleanup-action="Enrich First">
+                      <span class="cleanup-folder-tab">Folder</span>
+                      <span class="cleanup-action-title">Enrich First</span>
+                      <span class="cleanup-action-copy">Key firmographic or contact data is missing.</span>
+                    </button>
+                    <button class="cleanup-action-button" type="button" data-cleanup-action="Needs Review">
+                      <span class="cleanup-folder-tab">Folder</span>
+                      <span class="cleanup-action-title">Needs Review</span>
+                      <span class="cleanup-action-copy">Conflicting signals need a human call.</span>
+                    </button>
+                    <button class="cleanup-action-button" type="button" data-cleanup-action="Create New Record">
+                      <span class="cleanup-folder-tab">Folder</span>
+                      <span class="cleanup-action-title">Create New Record</span>
+                      <span class="cleanup-action-copy">Clean, net-new data is ready for the CRM.</span>
+                    </button>
+                    <button class="cleanup-action-button" type="button" data-cleanup-action="Reject Record">
+                      <span class="cleanup-folder-tab">Folder</span>
+                      <span class="cleanup-action-title">Reject Record</span>
+                      <span class="cleanup-action-copy">Spam, junk, or unqualified data should not enter the CRM.</span>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section id="cleanup-feedback" class="cleanup-feedback" aria-live="polite">
+                <p id="cleanup-feedback-title" class="cleanup-feedback-title">Select the strongest cleanup folder.</p>
+                <p id="cleanup-feedback-text" class="cleanup-feedback-text">Read the issue flag, object type, and ID status, then choose the safest cleanup action.</p>
+              </section>
+
+              <div class="cleanup-next-wrap">
+                <button id="cleanup-next" class="hud-link hud-button cleanup-next" type="button" disabled>Next File</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
   </body>
 </html>
