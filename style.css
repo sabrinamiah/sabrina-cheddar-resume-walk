@@ -701,7 +701,7 @@ body {
 
 .signal-lanes {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -720,10 +720,6 @@ body {
   box-shadow:
     inset 0 0 0 3px rgba(97, 201, 255, 0.16),
     0 4px 0 #06101e;
-}
-
-.signal-lane-button:last-child {
-  grid-column: 1 / -1;
 }
 
 .signal-lane-button:hover,
@@ -1095,11 +1091,12 @@ body {
   }
 
   .signal-lanes {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .signal-lane-button:last-child {
-    grid-column: auto;
+  .signal-lane-button {
+    min-height: 64px;
   }
 }
 
@@ -1195,9 +1192,10 @@ body {
   }
 
   .signal-lane-button {
-    min-height: 60px;
-    padding: 12px;
-    font-size: 0.46rem;
+    min-height: 58px;
+    padding: 10px;
+    font-size: 0.42rem;
+    line-height: 1.28;
   }
 
   .signal-feedback-title {
