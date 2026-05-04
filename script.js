@@ -53,22 +53,50 @@ const signalSortCards = [
   { card: "A company has 1,200 employees", category: "Firmographic Fit", feedback: "Employee count helps qualify company size and market segment." },
   { card: "A company has a mature marketing team with many functions", category: "Firmographic Fit", feedback: "Org structure shows operational maturity and likely buying readiness." },
   { card: "A company has a dedicated RevOps function", category: "Firmographic Fit", feedback: "Team makeup signals process maturity and stronger GTM infrastructure." },
+  { card: "A company serves enterprise healthcare buyers", category: "Firmographic Fit", feedback: "Industry and buyer type help confirm whether the account fits your target market." },
+  { card: "A company operates across North America and EMEA", category: "Firmographic Fit", feedback: "Geographic footprint can signal scale, complexity, and strategic fit." },
+  { card: "A company is backed by private equity", category: "Firmographic Fit", feedback: "Ownership structure can influence budget, growth goals, and GTM priorities." },
+  { card: "A company has more than 50 sales reps", category: "Firmographic Fit", feedback: "Team size helps signal organizational scale and likely operational needs." },
   { card: "A company uses Salesforce", category: "Technographic Fit", feedback: "CRM usage is a key stack signal for compatibility and targeting." },
   { card: "A company does not use 6Sense", category: "Technographic Fit", feedback: "Missing intent tooling can signal whitespace or upsell opportunity." },
   { card: "A company recently installed Marketo", category: "Technographic Fit", feedback: "New platform adoption is a strong signal about current GTM systems." },
   { card: "A company uses Microsoft Dynamics 365", category: "Technographic Fit", feedback: "Existing systems help shape fit, messaging, and workflow design." },
-  { card: "A CEO changes", category: "Hiring Signal", feedback: "Executive changes often trigger strategic shifts and new buying behavior." },
-  { card: "A company is hiring for GTM Engineer", category: "Hiring Signal", feedback: "This role suggests investment in modern revenue systems and automation." },
-  { card: "A company posts its first RevOps role", category: "Hiring Signal", feedback: "First-time ops hiring signals a new operational growth phase." },
-  { card: "A new VP of Marketing joins", category: "Hiring Signal", feedback: "A new leader often brings fresh priorities, tools, and vendor openness." },
+  { card: "A company uses HubSpot but not Salesforce", category: "Technographic Fit", feedback: "Existing platform choices shape stack compatibility and targeting strategy." },
+  { card: "A company uses ZoomInfo", category: "Technographic Fit", feedback: "Data tooling is a useful signal for GTM maturity and enrichment fit." },
+  { card: "A company runs WordPress", category: "Technographic Fit", feedback: "CMS and site tooling can help indicate stack fit and implementation context." },
+  { card: "A company recently removed a competitor tool from its stack", category: "Technographic Fit", feedback: "Tool removals can reveal whitespace, dissatisfaction, or active transition." },
+  { card: "A company posts its first GTM Engineer role", category: "Hiring Signal", feedback: "This usually signals a move toward automation, data workflows, and modern GTM systems." },
+  { card: "A company opens roles for both lifecycle marketing and marketing ops at the same time", category: "Hiring Signal", feedback: "Paired hiring like this often means the team is building a more mature demand engine." },
+  { card: "A company is hiring RevOps in EMEA for the first time", category: "Hiring Signal", feedback: "Regional ops hiring can signal international expansion and process scaling." },
+  { card: "A company adds job openings tied to ABM or intent-based outbound", category: "Hiring Signal", feedback: "That points to a more targeted, signal-driven go-to-market motion." },
+  { card: "A company is hiring solutions engineers", category: "Hiring Signal", feedback: "Technical GTM hiring often signals a move upmarket or toward more complex sales." },
+  { card: "A company adds openings for sales operations", category: "Hiring Signal", feedback: "Ops hiring points to investment in process, systems, and scale." },
+  { card: "A company is hiring SDRs in multiple regions", category: "Hiring Signal", feedback: "Multi-region hiring often reflects broader GTM expansion." },
+  { card: "A company is hiring demand generation managers", category: "Hiring Signal", feedback: "Demand gen hiring usually signals pipeline investment and growth planning." },
+  { card: "A target account visits the pricing page three times this week", category: "Intent Signal", feedback: "Repeated pricing-page activity often signals active solution evaluation and near-term interest." },
+  { card: "A company shows a surge in research around data governance", category: "Intent Signal", feedback: "Topic-level research spikes can reveal active buying interest before a form fill ever happens." },
+  { card: "A prospect downloads a webinar replay", category: "Intent Signal", feedback: "Content engagement like this often indicates meaningful interest in a specific problem space." },
+  { card: "A target account returns to the website three times in one week", category: "Intent Signal", feedback: "Repeated visits suggest sustained engagement rather than a one-off click." },
+  { card: "A company shows increased intent around revenue attribution tools", category: "Intent Signal", feedback: "Intent data tied to a specific category can point to active vendor evaluation." },
+  { card: "Multiple contacts from the same account visit the solutions page", category: "Intent Signal", feedback: "Multi-contact engagement often signals internal discussion and growing buying momentum." },
+  { card: "A prospect registers for a product-focused webinar", category: "Intent Signal", feedback: "Event registrations around a product topic can be a strong hand-raise signal." },
+  { card: "A target account spends significantly longer than usual on comparison content", category: "Intent Signal", feedback: "Deep time-on-page around comparison content often suggests active consideration of options." },
   { card: "A company just had layoffs", category: "Risk", feedback: "Layoffs can indicate contraction, budget pressure, or organizational instability." },
   { card: "A company freezes hiring across departments", category: "Risk", feedback: "Hiring freezes often point to caution, reduced spend, or internal risk." },
   { card: "A company closes a regional office", category: "Risk", feedback: "Office closures can indicate contraction or strategic pullback." },
   { card: "A company cuts marketing budget by 30%", category: "Risk", feedback: "Budget cuts often signal lower near-term spend and reduced GTM investment." },
+  { card: "A company sharply reduces open roles", category: "Risk", feedback: "A sudden drop in hiring activity can indicate caution or slowing growth." },
+  { card: "A company pauses expansion plans", category: "Risk", feedback: "Expansion slowdowns can point to budget pressure or internal uncertainty." },
+  { card: "A company announces restructuring", category: "Risk", feedback: "Restructuring often signals instability, shifting priorities, or reduced spend." },
+  { card: "A company loses a major customer", category: "Risk", feedback: "Customer loss can create revenue pressure and reduce short-term buying readiness." },
   { card: "A company just received $35M in funding", category: "Growth Signal", feedback: "Fresh funding usually increases capacity for hiring, tooling, and expansion." },
   { card: "A company has many roles open", category: "Growth Signal", feedback: "Broad hiring volume often signals expansion and momentum." },
   { card: "A major retailer lists a new company in their catalogue", category: "Growth Signal", feedback: "New distribution or channel reach is a strong expansion signal." },
   { card: "A company launches a new product line", category: "Growth Signal", feedback: "Product expansion often creates new GTM needs and budget opportunities." },
+  { card: "A company opens a new office", category: "Growth Signal", feedback: "Physical expansion often reflects hiring, investment, and operating momentum." },
+  { card: "A company acquires a smaller startup", category: "Growth Signal", feedback: "Acquisitions often signal expansion, budget, and new integration needs." },
+  { card: "A company doubles its SDR hiring", category: "Growth Signal", feedback: "Accelerating revenue hiring is a strong indicator of growth intent." },
+  { card: "A company expands into a new market", category: "Growth Signal", feedback: "New market entry usually creates fresh GTM needs and growth opportunities." },
 ];
 
 const techShapeTemplates = [
@@ -617,7 +645,7 @@ function renderSignalSort() {
   if (!signalSortState.answered) {
     signalFeedback.classList.remove("is-success", "is-error");
     signalFeedbackTitle.textContent = "Sort the card into the strongest-fit lane.";
-    signalFeedbackText.textContent = "Use the lane buttons below, or press number keys 1 through 5.";
+    signalFeedbackText.textContent = "Use the lane buttons below, or press number keys 1 through 6.";
     updateSignalLaneButtons();
   }
 }
@@ -1120,8 +1148,9 @@ window.addEventListener("keydown", (event) => {
       1: "Firmographic Fit",
       2: "Technographic Fit",
       3: "Hiring Signal",
-      4: "Risk",
-      5: "Growth Signal",
+      4: "Intent Signal",
+      5: "Risk",
+      6: "Growth Signal",
       Enter: "next",
     };
 
