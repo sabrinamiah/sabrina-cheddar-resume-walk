@@ -21,11 +21,6 @@ const locationEntries = [
 ];
 
 const locations = Object.fromEntries(locationEntries);
-const defaultTooltip = {
-  title: "Cat Walk",
-  text: "Click on or walk Cheddar over to the building you would like to visit.",
-  meta: "Tip: click any building and Cheddar will walk there for you.",
-};
 
 const GRID_COLS = 27;
 const GRID_ROWS = 22;
@@ -42,9 +37,10 @@ const BLOCKED_ROAD_CELLS = new Set(
 const map = document.getElementById("map");
 const buildings = Array.from(document.querySelectorAll(".building"));
 const moveButtons = Array.from(document.querySelectorAll(".move-button"));
-const tipTitle = document.getElementById("tip-title");
-const tipText = document.getElementById("tip-text");
-const tipMeta = document.getElementById("tip-meta");
+const popup = document.getElementById("building-popup");
+const popupTitle = document.getElementById("popup-title");
+const popupText = document.getElementById("popup-text");
+const popupClose = document.getElementById("popup-close");
 const walker = document.getElementById("walker");
 
 const approachCellsById = new Map();
@@ -118,6 +114,43 @@ function setWalkerCell(col, row) {
   map.style.setProperty("--walker-row", String(walkerCell.row));
 }
 
+function positionPopup(id) {
+  if (!id) return;
+
+  const activeBuilding = buildings.find((building) => building.dataset.id === id);
+  if (!activeBuilding) return;
+
+  const mapRect = map.getBoundingClientRect();
+  const buildingRect = activeBuilding.getBoundingClientRect();
+  const buildingCenterX = buildingRect.left - mapRect.left + (buildingRect.width / 2);
+  const buildingCenterY = buildingRect.top - mapRect.top + (buildingRect.height / 2);
+  const showOnRight = buildingCenterX < mapRect.width / 2;
+  const horizontalGap = 16;
+  const sideClassToAdd = showOnRight ? "popup-right" : "popup-left";
+  const sideClassToRemove = showOnRight ? "popup-left" : "popup-right";
+
+  popup.hidden = false;
+  popup.setAttribute("aria-hidden", "false");
+  popup.classList.remove(sideClassToRemove);
+  popup.classList.add(sideClassToAdd);
+
+  const popupWidth = popup.offsetWidth;
+  const popupHeight = popup.offsetHeight;
+  const rawLeft = showOnRight
+    ? buildingRect.right - mapRect.left + horizontalGap
+    : buildingRect.left - mapRect.left - horizontalGap;
+  const clampedLeft = showOnRight
+    ? clamp(rawLeft, 14, mapRect.width - popupWidth - 14)
+    : clamp(rawLeft, popupWidth + 14, mapRect.width - 14);
+  const clampedTop = clamp(buildingCenterY, popupHeight / 2 + 14, mapRect.height - (popupHeight / 2) - 14);
+  const popupTopEdge = clampedTop - (popupHeight / 2);
+  const tailTop = clamp(buildingCenterY - popupTopEdge, 22, popupHeight - 22);
+
+  popup.style.setProperty("--bubble-left", `${clampedLeft}px`);
+  popup.style.setProperty("--bubble-top", `${clampedTop}px`);
+  popup.style.setProperty("--bubble-tail-top", `${tailTop}px`);
+}
+
 function updateSelection(id) {
   activeId = id;
 
@@ -128,18 +161,17 @@ function updateSelection(id) {
   });
 
   if (!id) {
-    tipTitle.textContent = defaultTooltip.title;
-    tipText.textContent = defaultTooltip.text;
-    tipMeta.textContent = defaultTooltip.meta;
+    popup.hidden = true;
+    popup.setAttribute("aria-hidden", "true");
     return;
   }
 
   const location = locations[id];
   if (!location) return;
 
-  tipTitle.textContent = location.title;
-  tipText.textContent = location.text;
-  tipMeta.textContent = "";
+  popupTitle.textContent = location.title;
+  popupText.textContent = location.text;
+  positionPopup(id);
 }
 
 function chooseApproachTarget(candidateIds, dx, dy) {
@@ -306,7 +338,8 @@ function moveWalkerByStep(dx, dy) {
 
 buildings.forEach((building) => {
   building.setAttribute("aria-pressed", "false");
-  building.addEventListener("click", () => {
+  building.addEventListener("click", (event) => {
+    event.stopPropagation();
     const nearestTarget = chooseNearestApproachTarget(building.dataset.id);
     if (!nearestTarget) {
       updateSelection(building.dataset.id);
@@ -316,6 +349,23 @@ buildings.forEach((building) => {
     walkPath(nearestTarget.path);
     building.blur();
   });
+});
+
+popup.addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
+popupClose.addEventListener("click", () => {
+  updateSelection(null);
+  popupClose.blur();
+});
+
+map.addEventListener("click", (event) => {
+  if (event.target.closest(".building") || popup.contains(event.target)) {
+    return;
+  }
+
+  updateSelection(null);
 });
 
 window.addEventListener("keydown", (event) => {
@@ -334,6 +384,12 @@ moveButtons.forEach((button) => {
     moveWalkerByStep(dx, dy);
     button.blur();
   });
+});
+
+window.addEventListener("resize", () => {
+  if (activeId) {
+    positionPopup(activeId);
+  }
 });
 
 setWalkerCell(walkerCell.col, walkerCell.row);
