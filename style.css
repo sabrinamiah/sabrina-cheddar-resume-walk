@@ -110,35 +110,10 @@ body {
     0 20px 44px rgba(0, 0, 0, 0.35);
 }
 
-.tooltip {
-  margin-bottom: 14px;
-  padding: 12px 14px;
-  border: 3px solid var(--cyan);
-  background: linear-gradient(180deg, #12233a, #0a1626);
-  box-shadow: inset 0 0 0 3px rgba(97, 201, 255, 0.12);
-  width: min(100%, 920px);
-  min-height: 108px;
-  overflow-y: auto;
-}
-
-.tooltip h2 {
-  margin: 0 0 8px;
-  color: var(--yellow);
-  font-size: 0.65rem;
-  font-family: "Press Start 2P", monospace;
-}
-
-.tooltip p {
-  margin: 0;
-  font-size: 1.2rem;
-  line-height: 1.15;
-  color: #e0f4ff;
-}
-
-.tip-meta {
-  margin-top: 10px;
-  color: #8fd3ff;
-  font-size: 1rem;
+.map-viewport {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .map {
@@ -256,6 +231,116 @@ body {
     saturate(1.03)
     contrast(1.02)
     drop-shadow(0 6px 5px rgba(0, 0, 0, 0.28));
+}
+
+.building-popup {
+  --bubble-left: 50%;
+  --bubble-top: 50%;
+  --bubble-tail-top: 50%;
+  position: absolute;
+  left: var(--bubble-left);
+  top: var(--bubble-top);
+  z-index: 4;
+  width: clamp(180px, 31%, 320px);
+  min-height: 112px;
+  padding: 14px 36px 14px 16px;
+  border: 3px solid #b97d14;
+  background: linear-gradient(180deg, #ffe97d 0%, #ffd24f 100%);
+  color: #442600;
+  box-shadow:
+    0 0 0 3px rgba(255, 242, 171, 0.45) inset,
+    0 10px 22px rgba(0, 0, 0, 0.28);
+  image-rendering: pixelated;
+  transform: translate(0, -50%);
+}
+
+.building-popup[hidden] {
+  display: none;
+}
+
+.building-popup::before,
+.building-popup::after {
+  content: "";
+  position: absolute;
+  top: var(--bubble-tail-top);
+  width: 0;
+  height: 0;
+  transform: translateY(-50%);
+}
+
+.building-popup::before {
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+}
+
+.building-popup::after {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+.building-popup.popup-right::before {
+  left: -17px;
+  border-right: 17px solid #b97d14;
+}
+
+.building-popup.popup-right::after {
+  left: -11px;
+  border-right: 11px solid #ffe36b;
+}
+
+.building-popup.popup-left {
+  transform: translate(-100%, -50%);
+}
+
+.building-popup.popup-left::before {
+  right: -17px;
+  border-left: 17px solid #b97d14;
+}
+
+.building-popup.popup-left::after {
+  right: -11px;
+  border-left: 11px solid #ffe36b;
+}
+
+.building-popup h2 {
+  margin: 0 0 10px;
+  color: #704200;
+  font-size: 0.58rem;
+  font-family: "Press Start 2P", monospace;
+  line-height: 1.4;
+}
+
+.building-popup p {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.16;
+  color: #4d2d00;
+}
+
+.building-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid #a86700;
+  background: #ffef9d;
+  color: #7a4600;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+.building-popup-close:hover,
+.building-popup-close:focus-visible {
+  background: #fff8c4;
+}
+
+.building-popup-close:focus-visible {
+  outline: 3px solid #fff6cf;
+  outline-offset: 2px;
 }
 
 .building[data-id="hospital"]::before,
@@ -458,7 +543,7 @@ body {
   }
 
   .hud p,
-  .tooltip p {
+  .building-popup p {
     font-size: 1.05rem;
   }
 
@@ -510,18 +595,14 @@ body {
   }
 
   .hud p,
-  .tooltip p {
+  .building-popup p {
     font-size: 0.92rem;
   }
 
-  .tooltip {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    min-height: 108px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+  .building-popup {
+    width: min(54vw, 250px);
+    min-height: 96px;
+    padding: 12px 30px 12px 12px;
   }
 
   .map-shell {
@@ -550,5 +631,14 @@ body {
 
   .building-label {
     font-size: 0.36rem;
+  }
+
+  .building-popup h2 {
+    font-size: 0.48rem;
+  }
+
+  .building-popup-close {
+    top: 6px;
+    right: 6px;
   }
 }
