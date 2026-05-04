@@ -13,10 +13,11 @@
     <main class="page">
       <header class="hud">
         <h1>Sabrina Carver</h1>
-        <p>Welcome to my interactive resume. Explore Resume City, then switch into Tech Stack for a mini-game built right inside the same experience.</p>
+        <p>Explore Resume City or play one of the mini-games.</p>
         <div class="hud-actions" aria-label="Portfolio actions">
           <button class="hud-link hud-button is-active" type="button" data-view-target="resume-city">Resume City</button>
           <button class="hud-link hud-button" type="button" data-view-target="tech-stack">Tech Stack</button>
+          <button class="hud-link hud-button" type="button" data-view-target="signal-sort">Signal Sort</button>
           <a class="hud-link" href="https://www.linkedin.com/in/sabrina-carver-28928624b/" target="_blank" rel="noreferrer">LinkedIn</a>
         </div>
       </header>
@@ -133,9 +134,76 @@
             </div>
           </div>
         </div>
+
+        <div class="view-panel signal-sort-view" data-view-panel="signal-sort" hidden>
+          <div class="view-heading">
+            <p class="view-kicker">Clay Signals</p>
+            <h2>Signal Sort</h2>
+            <p class="view-description">Read each account signal and sort it into the best-fit Clay lane as fast and accurately as you can.</p>
+          </div>
+
+          <div class="signal-shell">
+            <aside class="signal-sidebar">
+              <div class="signal-stat-grid">
+                <div class="signal-stat-card">
+                  <span class="tech-stat-label">Score</span>
+                  <strong id="signal-score">0</strong>
+                </div>
+                <div class="signal-stat-card">
+                  <span class="tech-stat-label">Correct</span>
+                  <strong id="signal-correct">0</strong>
+                </div>
+                <div class="signal-stat-card">
+                  <span class="tech-stat-label">Streak</span>
+                  <strong id="signal-streak">0</strong>
+                </div>
+              </div>
+
+              <div class="signal-progress-card">
+                <span class="tech-stat-label">Deck Progress</span>
+                <p id="signal-progress" class="signal-progress-text">Card 1 of 20</p>
+              </div>
+
+              <div class="signal-progress-card">
+                <span class="tech-stat-label">How To Play</span>
+                <p class="signal-progress-text">Choose the lane that best matches the signal. After each answer, you’ll see why it belongs there.</p>
+              </div>
+
+              <button id="signal-restart" class="hud-link hud-button signal-restart" type="button">Restart Deck</button>
+            </aside>
+
+            <div class="signal-main">
+              <div class="signal-card-stage">
+                <div class="signal-card-header">
+                  <span class="tech-stat-label">Live Signal</span>
+                </div>
+                <article id="signal-card" class="signal-card">
+                  <p id="signal-card-text">A company has $100M in annual revenue</p>
+                </article>
+              </div>
+
+              <div class="signal-lanes" aria-label="Signal Sort categories">
+                <button class="signal-lane-button" type="button" data-signal-category="Firmographic Fit">Firmographic Fit</button>
+                <button class="signal-lane-button" type="button" data-signal-category="Technographic Fit">Technographic Fit</button>
+                <button class="signal-lane-button" type="button" data-signal-category="Hiring Signal">Hiring Signal</button>
+                <button class="signal-lane-button" type="button" data-signal-category="Risk">Risk</button>
+                <button class="signal-lane-button" type="button" data-signal-category="Growth Signal">Growth Signal</button>
+              </div>
+
+              <div id="signal-feedback" class="signal-feedback" aria-live="polite">
+                <p id="signal-feedback-title" class="signal-feedback-title">Sort the card into the strongest-fit lane.</p>
+                <p id="signal-feedback-text" class="signal-feedback-text">You can use the lane buttons or number keys 1 through 5.</p>
+              </div>
+
+              <div class="signal-actions">
+                <button id="signal-next" class="hud-link hud-button signal-next" type="button" disabled>Next Card</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
   </body>
 </html>
