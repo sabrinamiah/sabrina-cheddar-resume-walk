@@ -389,6 +389,7 @@ body {
   font-size: 1.1rem;
   line-height: 1.16;
   color: #4d2d00;
+  white-space: pre-line;
 }
 
 .building-popup-close {
