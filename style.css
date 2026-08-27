@@ -316,7 +316,10 @@ body {
   top: var(--bubble-top);
   z-index: 4;
   width: clamp(180px, 31%, 320px);
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 28px);
   min-height: 112px;
+  box-sizing: border-box;
   padding: 14px 36px 14px 16px;
   border: 3px solid #b97d14;
   background: linear-gradient(180deg, #ffe97d 0%, #ffd24f 100%);
@@ -326,6 +329,10 @@ body {
     0 10px 22px rgba(0, 0, 0, 0.28);
   image-rendering: pixelated;
   transform: translate(0, -50%);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
 }
 
 .building-popup[hidden] {
@@ -1598,7 +1605,9 @@ body {
   }
 
   .building-popup {
-    width: min(54vw, 250px);
+    width: min(86vw, 360px);
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
     min-height: 96px;
     padding: 12px 30px 12px 12px;
   }
